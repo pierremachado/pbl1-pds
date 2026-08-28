@@ -2,11 +2,12 @@ pkg load signal
 
 clear all; clc;
 
-f = 5;
+f = 2;
 phi = 0;
-Fs = 20;
+Fs = 8;
 
 x = @(t) sin(2*pi*f*t + phi);
+%x = @(t) sawtooth(2*pi*f*t, 1/2);
 
 Ti = 0;
 Ts = 1/Fs;
@@ -20,7 +21,7 @@ xc = x(t);
 [xsi, tsi] = amostragem_ideal(x, Fs, Ti, Tf);
 
 % Amostragem natural
-wn = Ts/4;
+wn = Ts/2;
 [xsn, tsn] = amostragem_natural(x, Fs, wn, Ti, Tf);
 
 % Amostragem flat-top
