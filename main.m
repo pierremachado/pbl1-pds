@@ -1,12 +1,10 @@
-pkg load signal
+clear all; clc;
 
 addpath(genpath('src'));
 
-clear all; clc;
-
 f = 2;
 phi = 0;
-Fs = 8;
+Fs = 20;
 
 x = @(t) sin(2*pi*f*t + phi);
 %x = @(t) sawtooth(2*pi*f*t, 1/2);
@@ -16,77 +14,80 @@ Ts = 1/Fs;
 Tf = 1;
 
 % Sinal "contínuo" numericamente
-t = Ti:1/1000:Tf;
-xc = x(t);
+t_continuo = Ti:1/1000:Tf;
+x_continuo = x(t_continuo);
 
 % Amostragem ideal
-[xsi, tsi] = amostragem_ideal(x, Fs, Ti, Tf);
+[xs_ideal, ts_ideal] = amostragem_ideal(x, Fs, Ti, Tf);
+[xs_ideal_continuo, ts_ideal_continuo] = discreto_para_impulsos(xs_ideal, ts_ideal, Ti, Tf, Ts/1000);
 
 % Amostragem natural
 wn = Ts/2;
-[xsn, tsn] = amostragem_natural(x, Fs, wn, Ti, Tf);
+[xs_natural, ts_natural] = amostragem_natural(x, Fs, wn, Ti, Tf);
 
 % Amostragem flat-top
 wft = Ts + 1e-6;
-[xsft, tsft] = amostragem_flattop(x, Fs, wft, Ti, Tf);
+[xs_flat_top, ts_flat_top] = amostragem_flattop(x, Fs, wft, Ti, Tf);
 
 % Plot
 figure(1);
 
 subplot(4,1,1);
-plot(t, xc);
+plot(t_continuo, x_continuo);
 title('Sinal original x(t)');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 grid on;
 
 subplot(4,1,2);
-stem(tsi, xsi);
+stem(ts_ideal, xs_ideal);
 title('Sinal amostrado idealmente');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 grid on;
 
 subplot(4,1,3);
-plot(tsn, xsn);
+plot(ts_natural, xs_natural);
 title('Sinal amostrado naturalmente');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 grid on;
 
 subplot(4,1,4);
-plot(tsft, xsft);
+plot(ts_flat_top, xs_flat_top);
 title('Sinal amostrado topo-plano');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 grid on;
 
 %% FFT bilateral
-
 % Número de pontos
-Nc  = length(xc);
-Nsi = length(xsi);
-Nsn = length(xsn);
-Nft = length(xsft);
+Nc  = length(x_continuo);
+Nsi = length(xs_ideal_continuo);
+Nsn = length(xs_natural);
+Nft = length(xs_flat_top);
 
 % Taxas efetivas de amostragem dos vetores
 Fc  = 1000;
-Fsi = Fs;
+Fsi = 1/(Ts/1000);
 Fsn = 10000;
 Fft = 10000;
 
 % FFT
 % TODO: Implementar as funções de FT de forma analítica
-Xc  = fftshift(fft(xc));
-Xsi = fftshift(fft(xsi));
-Xsn = fftshift(fft(xsn));
-Xft = fftshift(fft(xsft));
+Xc  = fftshift(fft(x_continuo));
+Xi = fftshift(fft(xs_ideal_continuo));
+Xn = fftshift(fft(xs_natural));
+Xft = fftshift(fft(xs_flat_top));
 
 % Magnitude normalizada
 Pc  = abs(Xc/Nc);
-Psi = abs(Xsi/Nsi);
-Psn = abs(Xsn/Nsn);
+Psi = abs(Xi/Nsi);
+Psn = abs(Xn/Nsn);
 Pft = abs(Xft/Nft);
+
+% Fase
+Argft = arg(Xft/Nft);
 
 % Eixos de frequência
 fc  = (-floor(Nc/2):ceil(Nc/2)-1)*Fc/Nc;
@@ -99,7 +100,7 @@ fmax = 100;
 
 figure(2);
 
-subplot(4,1,1);
+subplot(5,1,1);
 plot(fc, Pc, 'Color', [1 0.5 0]);
 title('FFT bilateral do sinal original x(t)');
 xlabel('Frequência (Hz)');
@@ -107,7 +108,7 @@ ylabel('|X(f)|');
 grid on;
 xlim([-fmax fmax]);
 
-subplot(4,1,2);
+subplot(5,1,2);
 plot(fsi, Psi, 'Color', [1 0.5 0]);
 title('FFT bilateral da amostragem ideal');
 xlabel('Frequência (Hz)');
@@ -115,7 +116,7 @@ ylabel('|X(f)|');
 grid on;
 xlim([-fmax fmax]);
 
-subplot(4,1,3);
+subplot(5,1,3);
 plot(fsn, Psn, 'Color', [1 0.5 0]);
 title('FFT bilateral da amostragem natural');
 xlabel('Frequência (Hz)');
@@ -123,11 +124,19 @@ ylabel('|X(f)|');
 grid on;
 xlim([-fmax fmax]);
 
-subplot(4,1,4);
+subplot(5,1,4);
 plot(fft_freq, Pft, 'Color', [1 0.5 0]);
 title('FFT bilateral da amostragem topo-plano');
 xlabel('Frequência (Hz)');
 ylabel('|X(f)|');
+grid on;
+xlim([-fmax fmax]);
+
+subplot(5,1,5);
+plot(fft_freq, Argft, 'Color', [1 0.5 0]);
+title('FFT bilateral da amostragem topo-plano');
+xlabel('Frequência (Hz)');
+ylabel('∠X(f)');
 grid on;
 xlim([-fmax fmax]);
 
