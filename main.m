@@ -1,5 +1,7 @@
 pkg load signal
 
+addpath(genpath('src'));
+
 clear all; clc;
 
 f = 2;
@@ -74,6 +76,7 @@ Fsn = 10000;
 Fft = 10000;
 
 % FFT
+% TODO: Implementar as funções de FT de forma analítica
 Xc  = fftshift(fft(xc));
 Xsi = fftshift(fft(xsi));
 Xsn = fftshift(fft(xsn));
@@ -129,9 +132,6 @@ grid on;
 xlim([-fmax fmax]);
 
 % Save
-
-pasta = fileparts(mfilename('fullpath'));
-
 set(1, 'paperunits', 'inches');
 set(1, 'papersize', [19.2 10.8]);
 set(1, 'paperposition', [0 0 19.2 10.8]);
@@ -140,5 +140,15 @@ set(2, 'paperunits', 'inches');
 set(2, 'papersize', [19.2 10.8]);
 set(2, 'paperposition', [0 0 19.2 10.8]);
 
-print(1, fullfile(pasta, 'sinais_amostragem.jpg'), '-djpg', '-r100');
-print(2, fullfile(pasta, 'fft_amostragem.jpg'), '-djpg', '-r100');
+% 1. Define o caminho absoluto da pasta de saída primeiro
+root_dir = fileparts(mfilename('fullpath'));
+output_path = fullfile(root_dir, 'output');
+
+% 2. Cria a pasta no local correto (se não existir)
+if ~exist(output_path, 'dir')
+    mkdir(output_path);
+end
+
+% 3. Salva os arquivos com o caminho absoluto
+print(1, fullfile(output_path, 'sinais_amostragem.jpg'), '-dpng', '-r100');
+print(2, fullfile(output_path, 'fft_amostragem.jpg'), '-dpng', '-r100');
