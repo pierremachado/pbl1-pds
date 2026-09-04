@@ -1,3 +1,5 @@
+pkg load signal
+
 clear all; clc;
 
 addpath(genpath('src'));
@@ -7,7 +9,8 @@ phi = 0;
 Fs = 20;
 
 x = @(t) sin(2*pi*f*t + phi);
-%x = @(t) sawtooth(2*pi*f*t, 1/2);
+% debug
+% x = @(t) sawtooth(2*pi*f*t, 1/2);
 
 Ti = 0;
 Ts = 1/Fs;
@@ -22,7 +25,7 @@ x_continuo = x(t_continuo);
 [xs_ideal_continuo, ts_ideal_continuo] = discreto_para_impulsos(xs_ideal, ts_ideal, Ti, Tf, Ts/1000);
 
 % Amostragem natural
-wn = Ts/2;
+wn = Ts/8;
 [xs_natural, ts_natural] = amostragem_natural(x, Fs, wn, Ti, Tf);
 
 % Amostragem flat-top
@@ -87,7 +90,10 @@ Psn = abs(Xn/Nsn);
 Pft = abs(Xft/Nft);
 
 % Fase
-Argft = arg(Xft/Nft);
+Xft_limpo = Xft;
+% Zera os valores do número complexo onde a magnitude normalizada é muito pequena
+Xft_limpo(abs(Xft/Nft) < 1e-3) = 0; 
+Argft = angle(Xft_limpo);
 
 % Eixos de frequência
 fc  = (-floor(Nc/2):ceil(Nc/2)-1)*Fc/Nc;
@@ -126,7 +132,7 @@ xlim([-fmax fmax]);
 
 subplot(5,1,4);
 plot(fft_freq, Pft, 'Color', [1 0.5 0]);
-title('FFT bilateral da amostragem topo-plano');
+title('Magnitude da FFT bilateral da amostragem topo-plano');
 xlabel('Frequência (Hz)');
 ylabel('|X(f)|');
 grid on;
@@ -134,7 +140,7 @@ xlim([-fmax fmax]);
 
 subplot(5,1,5);
 plot(fft_freq, Argft, 'Color', [1 0.5 0]);
-title('FFT bilateral da amostragem topo-plano');
+title('Fase da FFT bilateral da amostragem topo-plano');
 xlabel('Frequência (Hz)');
 ylabel('∠X(f)');
 grid on;
