@@ -4,9 +4,9 @@ clear all; clc;
 
 addpath(genpath('src'));
 
-f = 2;
+f = 10;
 phi = 0;
-Fs = 20;
+Fs = 40;
 
 x = @(t) sin(2*pi*f*t + phi);
 % debug
@@ -17,7 +17,7 @@ Ts = 1/Fs;
 Tf = 1;
 
 % Sinal "contínuo" numericamente
-t_continuo = Ti:1/1000:Tf;
+t_continuo = Ti:1/f/1000:Tf;
 x_continuo = x(t_continuo);
 
 % Amostragem ideal
@@ -25,11 +25,11 @@ x_continuo = x(t_continuo);
 [xs_ideal_continuo, ts_ideal_continuo] = discreto_para_impulsos(xs_ideal, ts_ideal, Ti, Tf, Ts/1000);
 
 % Amostragem natural
-wn = Ts/8;
+wn = Ts/4;
 [xs_natural, ts_natural] = amostragem_natural(x, Fs, wn, Ti, Tf);
 
-% Amostragem flat-top
-wft = Ts + 1e-6;
+% Amostragem flat-top (sample and hold)
+wft = Ts;
 [xs_flat_top, ts_flat_top] = amostragem_flattop(x, Fs, wft, Ti, Tf);
 
 % Plot
