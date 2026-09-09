@@ -1,169 +1,99 @@
-pkg load signal
+% =========================================================================
+% Análise de Amostragem Ideal de um Sinal Senoidal
+% =========================================================================
+clear; clc; close all;
 
-clear all; clc;
+% 1. Definição dos Parâmetros do Sinal e da Amostragem
+f0 = 2;               % Frequência do sinal original (Hz)
+w0 = 2*pi*f0;         % Frequência angular (rad/s)
+fs = 13;              % Frequência de amostragem (Hz) - Respeita Nyquist (fs > 2*f0)
+ws = 2*pi*fs;         % Frequência angular de amostragem (rad/s)
+Ts = 1/fs;            % Período de amostragem (s)
 
-addpath(genpath('src'));
+% Vetores de tempo
+t_cont = 0:0.001:1; % Eixo de tempo "contínuo" (alta resolução)
+t_samp = 0:Ts:1;    % Eixo de tempo discreto (amostrado)
 
-f = 10;
-phi = 0;
-Fs = 40;
+% =========================================================================
+% PLOT 1: Sinal contínuo no tempo x(t) = sin(w0*t)
+% =========================================================================
+x_cont = sin(w0 * t_cont);
 
-x = @(t) sin(2*pi*f*t + phi);
-% debug
-% x = @(t) sawtooth(2*pi*f*t, 1/2);
+figure('Name', 'Analise de Amostragem Ideal', 'Position', [100, 100, 1000, 800]);
 
-Ti = 0;
-Ts = 1/Fs;
-Tf = 1;
-
-% Sinal "contínuo" numericamente
-t_continuo = Ti:1/f/1000:Tf;
-x_continuo = x(t_continuo);
-
-% Amostragem ideal
-[xs_ideal, ts_ideal] = amostragem_ideal(x, Fs, Ti, Tf);
-[xs_ideal_continuo, ts_ideal_continuo] = discreto_para_impulsos(xs_ideal, ts_ideal, Ti, Tf, Ts/1000);
-
-% Amostragem natural
-wn = Ts/4;
-[xs_natural, ts_natural] = amostragem_natural(x, Fs, wn, Ti, Tf);
-
-% Amostragem flat-top (sample and hold)
-wft = Ts;
-[xs_flat_top, ts_flat_top] = amostragem_flattop(x, Fs, wft, Ti, Tf);
-
-% Plot
-figure(1);
-
-subplot(4,1,1);
-plot(t_continuo, x_continuo);
-title('Sinal original x(t)');
+subplot(2, 2, 1);
+plot(t_cont, x_cont, 'b-', 'LineWidth', 1.5);
+title('1. Sinal Contínuo x(t) = sen(\omega_0 t)');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 grid on;
+ylim([-1.2 1.2]);
 
-subplot(4,1,2);
-stem(ts_ideal, xs_ideal);
-title('Sinal amostrado idealmente');
+% =========================================================================
+% PLOT 2: Sinal amostrado de forma ideal x_s(t) = x(t)*p(t)
+% =========================================================================
+x_samp = sin(w0 * t_samp);
+
+subplot(2, 2, 2);
+% Usamos 'stem' para representar o trem de impulsos ponderado pelo sinal
+stem(t_samp, x_samp, 'r', 'filled', 'LineWidth', 1.5);
+title('2. Sinal Amostrado x_s(t) = x(t) \cdot p(t)');
 xlabel('Tempo (s)');
 ylabel('Amplitude');
 grid on;
+ylim([-1.2 1.2]);
 
-subplot(4,1,3);
-plot(ts_natural, xs_natural);
-title('Sinal amostrado naturalmente');
-xlabel('Tempo (s)');
-ylabel('Amplitude');
-grid on;
+% =========================================================================
+% PLOT 3: Espectro Analítico do Sinal Contínuo X(jw)
+% =========================================================================
+% Para x(t) = sen(w0*t), a magnitude de X(jw) possui impulsos em -w0 e +w0 
+% com área igual a pi. Usaremos frequência em Hz (f) para facilitar a 
+% visualização, onde a amplitude é 0.5 em -f0 e +f0.
 
-subplot(4,1,4);
-plot(ts_flat_top, xs_flat_top);
-title('Sinal amostrado topo-plano');
-xlabel('Tempo (s)');
-ylabel('Amplitude');
-grid on;
+f_orig = [-f0, f0];       % Posição dos impulsos
+mag_orig = [0.5, 0.5];    % Magnitude dos impulsos
 
-%% FFT bilateral
-% Número de pontos
-Nc  = length(x_continuo);
-Nsi = length(xs_ideal_continuo);
-Nsn = length(xs_natural);
-Nft = length(xs_flat_top);
-
-% Taxas efetivas de amostragem dos vetores
-Fc  = 1000;
-Fsi = 1/(Ts/1000);
-Fsn = 10000;
-Fft = 10000;
-
-% FFT
-% TODO: Implementar as funções de FT de forma analítica
-Xc  = fftshift(fft(x_continuo));
-Xi = fftshift(fft(xs_ideal_continuo));
-Xn = fftshift(fft(xs_natural));
-Xft = fftshift(fft(xs_flat_top));
-
-% Magnitude normalizada
-Pc  = abs(Xc/Nc);
-Psi = abs(Xi/Nsi);
-Psn = abs(Xn/Nsn);
-Pft = abs(Xft/Nft);
-
-% Fase
-Xft_limpo = Xft;
-% Zera os valores do número complexo onde a magnitude normalizada é muito pequena
-Xft_limpo(abs(Xft/Nft) < 1e-3) = 0; 
-Argft = angle(Xft_limpo);
-
-% Eixos de frequência
-fc  = (-floor(Nc/2):ceil(Nc/2)-1)*Fc/Nc;
-fsi = (-floor(Nsi/2):ceil(Nsi/2)-1)*Fsi/Nsi;
-fsn = (-floor(Nsn/2):ceil(Nsn/2)-1)*Fsn/Nsn;
-fft_freq = (-floor(Nft/2):ceil(Nft/2)-1)*Fft/Nft;
-
-% Plot
-fmax = 100;
-
-figure(2);
-
-subplot(5,1,1);
-plot(fc, Pc, 'Color', [1 0.5 0]);
-title('FFT bilateral do sinal original x(t)');
+subplot(2, 2, 3);
+% Representando deltas de Dirac com stem e marcadores de setas (^)
+stem(f_orig, mag_orig, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+title('3. Espectro Analítico Contínuo |X(j\omega)|');
 xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
+ylabel('Magnitude');
 grid on;
-xlim([-fmax fmax]);
+xlim([-40 40]);
+ylim([0 0.8]);
+% Adicionando linha base para clareza
+line([-40 40], [0 0], 'Color', 'k');
 
-subplot(5,1,2);
-plot(fsi, Psi, 'Color', [1 0.5 0]);
-title('FFT bilateral da amostragem ideal');
-xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
-grid on;
-xlim([-fmax fmax]);
+% =========================================================================
+% PLOT 4: Espectro Analítico do Sinal Amostrado X_s(jw)
+% =========================================================================
+% X_s(jw) = 1/Ts * sum( X(j(w - k*ws)) )
+% Isso cria réplicas do espectro original deslocadas por múltiplos de fs,
+% escalonadas por 1/Ts (ou seja, multiplicadas por fs).
 
-subplot(5,1,3);
-plot(fsn, Psn, 'Color', [1 0.5 0]);
-title('FFT bilateral da amostragem natural');
-xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
-grid on;
-xlim([-fmax fmax]);
+k = -2:2; % Avaliaremos as réplicas de k=-2 até k=2
+f_samp_locs = [];
+mag_samp = [];
 
-subplot(5,1,4);
-plot(fft_freq, Pft, 'Color', [1 0.5 0]);
-title('Magnitude da FFT bilateral da amostragem topo-plano');
-xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
-grid on;
-xlim([-fmax fmax]);
-
-subplot(5,1,5);
-plot(fft_freq, Argft, 'Color', [1 0.5 0]);
-title('Fase da FFT bilateral da amostragem topo-plano');
-xlabel('Frequência (Hz)');
-ylabel('∠X(f)');
-grid on;
-xlim([-fmax fmax]);
-
-% Save
-set(1, 'paperunits', 'inches');
-set(1, 'papersize', [19.2 10.8]);
-set(1, 'paperposition', [0 0 19.2 10.8]);
-
-set(2, 'paperunits', 'inches');
-set(2, 'papersize', [19.2 10.8]);
-set(2, 'paperposition', [0 0 19.2 10.8]);
-
-% 1. Define o caminho absoluto da pasta de saída primeiro
-root_dir = fileparts(mfilename('fullpath'));
-output_path = fullfile(root_dir, 'output');
-
-% 2. Cria a pasta no local correto (se não existir)
-if ~exist(output_path, 'dir')
-    mkdir(output_path);
+% Construindo as réplicas analiticamente
+for idx = 1:length(k)
+    f_shift = k(idx) * fs;
+    f_samp_locs = [f_samp_locs, -f0 + f_shift, f0 + f_shift];
+    % A magnitude é escalonada por 1/Ts = fs
+    mag_samp = [mag_samp, 0.5 * fs, 0.5 * fs]; 
 end
 
-% 3. Salva os arquivos com o caminho absoluto
-print(1, fullfile(output_path, 'sinais_amostragem.jpg'), '-dpng', '-r100');
-print(2, fullfile(output_path, 'fft_amostragem.jpg'), '-dpng', '-r100');
+subplot(2, 2, 4);
+stem(f_samp_locs, mag_samp, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+title('4. Espectro Amostrado Analítico |X_s(j\omega)|');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude');
+grid on;
+xlim([-40 40]);
+ylim([0 (0.5*fs)+2]);
+line([-40 40], [0 0], 'Color', 'k');
+
+sgtitle('Análise Analítica de Amostragem Ideal de Sinais');
+
+% TODO: adicionar amostragem natural e topo-plano analítico
