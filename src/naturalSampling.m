@@ -13,7 +13,7 @@ function [naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, st
   % naturalTime: vector of sample times
 
   % Checagem de erro
-  if isempty(x) || strcmp(typeinfo(x), "anonymous function")
+  if isempty(x) || ~isa(x, 'function_handle')
     error('x must be a valid function handle');
   end
   
