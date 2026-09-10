@@ -58,7 +58,7 @@ grid on; ylim([-1.2 1.2]);
 % PLOT 3: Frequência - Analítico (Contínuo)
 subplot(2, 2, 3);
 frequencyContinuous = [-frequency, frequency];
-magnitudeContinuous = [1, 1];
+magnitudeContinuous = [0.5, 0.5];
 stem(frequencyContinuous, magnitudeContinuous, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Contínuo Analítico |X(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
