@@ -114,7 +114,7 @@ for k = kNaturalSamples
     frequencyShift = k * samplingFrequency;
     naturalFrequencyLocations = [naturalFrequencyLocations, -frequency + frequencyShift, frequency + frequencyShift];
     naturalAmplitudeScale = (tau / samplingPeriod) * sinc(k * samplingFrequency * tau);
-    naturalMagnitudes = [naturalMagnitudes, abs(0.5 * naturalAmplitudeScale), abs(0.5 * naturalAmplitudeScale)];
+    naturalMagnitudes = [naturalMagnitudes, abs(naturalAmplitudeScale), abs(naturalAmplitudeScale)];
 end
 stem(naturalFrequencyLocations, naturalMagnitudes, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Analítico: Natural |X_n(j\omega)|');
@@ -132,13 +132,13 @@ flatTopMagnitudes = [];
 for i = 1:length(flatTopFrequencyLocations)
     flatTopFrequencyValues = flatTopFrequencyLocations(i);
     flatTopMagnitudeScale = (tau / samplingPeriod) * sinc(flatTopFrequencyValues * tau);
-    flatTopMagnitudes = [flatTopMagnitudes, abs(0.5 * flatTopMagnitudeScale)];
+    flatTopMagnitudes = [flatTopMagnitudes, abs(flatTopMagnitudeScale)];
 end
 stem(flatTopFrequencyLocations, flatTopMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 hold on;
 % Envelope do sinc
-sincEnvelopeFrequency = -60:0.1:60;
-flatTopEnvelope = abs(0.5 * (tau / samplingPeriod) * sinc(sincEnvelopeFrequency * tau));
+sincEnvelopeFrequency = -60:0.01:60;
+flatTopEnvelope = abs((tau / samplingPeriod) * sinc(sincEnvelopeFrequency * tau));
 plot(sincEnvelopeFrequency, flatTopEnvelope, 'k--', 'LineWidth', 1);
 hold off;
 title('4. Espectro Analítico: Topo-Plano |X_{ft}(j\omega)|');
