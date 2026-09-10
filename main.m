@@ -1,150 +1,151 @@
-pkg load signal
+% =========================================================================
+% MAIN.M - Análise Analítica de Amostragem (Ideal, Natural e Topo-Plano)
+% =========================================================================
 
-clear all; clc;
+clear; clc; close all;
 
-addpath(genpath('src'));
+% Adiciona o diretório 'src' e o 'utils' ao path de busca do MATLAB/Octave
+addpath('src', 'utils');
 
-f = 10;
-phi = 0;
-Fs = 40;
+%% 1. Definição dos Parâmetros Globais
+frequency = 5;                 % Frequência do sinal original (Hz)
+omega = 2*pi*frequency;           % Frequência angular (rad/s)
+samplingFrequency = 20;                % Frequência de amostragem (Hz)
+samplingPeriod = 1/samplingFrequency;              % Período de amostragem (s)
+tau = 0.2 * samplingPeriod;         % Largura do pulso (20% do período)
 
-x = @(t) sin(2*pi*f*t + phi);
-% debug
-% x = @(t) sawtooth(2*pi*f*t, 1/2);
+startTime = 0;                 % Tempo inicial
+endTime = 1;               % Tempo final
+continuousTimeStep = 0.0005;       % Passo de tempo para o vetor "contínuo"
 
-Ti = 0;
-Ts = 1/Fs;
-Tf = 1;
+% Define o sinal de origem como um "function handle" para passar às funções
+x = @(t) sin(omega * t);
 
-% Sinal "contínuo" numericamente
-t_continuo = Ti:1/f/1000:Tf;
-x_continuo = x(t_continuo);
+% Eixo de tempo contínuo para plotagem do sinal base
+continuousTime = startTime:continuousTimeStep:endTime;
+continuousX = x(continuousTime);
 
-% Amostragem ideal
-[xs_ideal, ts_ideal] = amostragem_ideal(x, Fs, Ti, Tf);
-[xs_ideal_continuo, ts_ideal_continuo] = discreto_para_impulsos(xs_ideal, ts_ideal, Ti, Tf, Ts/1000);
+%% 2. Amostragem Ideal
+% Chamada da função que está em src/idealSampling.m
+[idealX, idealTime] = idealSampling(x, samplingFrequency, startTime, endTime);
 
-% Amostragem natural
-wn = Ts/4;
-[xs_natural, ts_natural] = amostragem_natural(x, Fs, wn, Ti, Tf);
+figure(1, 'Name', 'Analise de Amostragem Ideal', 'Position', [100, 100, 1000, 800]);
 
-% Amostragem flat-top (sample and hold)
-wft = Ts;
-[xs_flat_top, ts_flat_top] = amostragem_flattop(x, Fs, wft, Ti, Tf);
+% PLOT 1: Tempo - Sinal Contínuo
+subplot(2, 2, 1);
+plot(continuousTime, continuousX, 'b-', 'LineWidth', 1.5);
+title('1. Sinal Contínuo x(t) = sen(\omega_0 t)');
+xlabel('Tempo (s)'); ylabel('Amplitude');
+grid on; ylim([-1.2 1.2]);
 
-% Plot
-figure(1);
+% PLOT 2: Tempo - Amostrado de forma Ideal
+subplot(2, 2, 2);
+stem(idealTime, idealX, 'r', 'filled', 'LineWidth', 1.5);
+title('2. Amostragem Ideal (Tempo)');
+xlabel('Tempo (s)'); ylabel('Amplitude');
+grid on; ylim([-1.2 1.2]);
 
-subplot(4,1,1);
-plot(t_continuo, x_continuo);
-title('Sinal original x(t)');
-xlabel('Tempo (s)');
-ylabel('Amplitude');
-grid on;
+% PLOT 3: Frequência - Analítico (Contínuo)
+subplot(2, 2, 3);
+frequencyContinuous = [-frequency, frequency];
+magnitudeContinuous = [0.5, 0.5];
+stem(frequencyContinuous, magnitudeContinuous, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+title('3. Espectro Contínuo Analítico |X(j\omega)|');
+xlabel('Frequência (Hz)'); ylabel('Magnitude');
+grid on; xlim([-40 40]); ylim([0 0.8]);
+line([-40 40], [0 0], 'Color', 'k');
 
-subplot(4,1,2);
-stem(ts_ideal, xs_ideal);
-title('Sinal amostrado idealmente');
-xlabel('Tempo (s)');
-ylabel('Amplitude');
-grid on;
+% PLOT 4: Frequência - Analítico (Amostrado Ideal)
+subplot(2, 2, 4);
+kIdealSamples = -2:2;
+idealFrequencyLocations = []; 
+idealMagnitudes = [];
 
-subplot(4,1,3);
-plot(ts_natural, xs_natural);
-title('Sinal amostrado naturalmente');
-xlabel('Tempo (s)');
-ylabel('Amplitude');
-grid on;
+% X_s(jω) = (1/Ts) * Σ_{k=-∞}^{∞} X(j(ω - k * ωs)))
+% Esta expressão representa a transformada de Fourier da amostragem ideal de um sinal.
+% É a soma de infinitas translações da transformada de Fourier original X(jω)
+% espaçadas pela frequência de amostragem ωs, escaladas por 1/Ts.
+for k = kIdealSamples
+    frequencyShift = k * samplingFrequency;
+    idealFrequencyLocations = [idealFrequencyLocations, -frequency + frequencyShift, frequency + frequencyShift];
+    idealMagnitudes = [idealMagnitudes, 0.5 * samplingFrequency, 0.5 * samplingFrequency]; 
+end
+stem(idealFrequencyLocations, idealMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+title('4. Espectro Amostrado Ideal Analítico |X_s(j\omega)|');
+xlabel('Frequência (Hz)'); ylabel('Magnitude');
+grid on; xlim([-40 40]); ylim([0 (0.5*samplingFrequency)+2]);
+line([-40 40], [0 0], 'Color', 'k');
 
-subplot(4,1,4);
-plot(ts_flat_top, xs_flat_top);
-title('Sinal amostrado topo-plano');
-xlabel('Tempo (s)');
-ylabel('Amplitude');
-grid on;
+%% 3. Amostragem Natural e Topo-Plano
+% Chamada das funções em src/
+[naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, startTime, endTime);
+[flatTopX, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime, endTime);
 
-%% FFT bilateral
-% Número de pontos
-Nc  = length(x_continuo);
-Nsi = length(xs_ideal_continuo);
-Nsn = length(xs_natural);
-Nft = length(xs_flat_top);
+figure(2, 'Name', 'Amostragem Natural e Topo-Plano', 'Position', [150, 150, 1000, 800]);
 
-% Taxas efetivas de amostragem dos vetores
-Fc  = 1000;
-Fsi = 1/(Ts/1000);
-Fsn = 10000;
-Fft = 10000;
+% PLOT 1: Tempo - Amostragem Natural
+subplot(2, 2, 1);
+plot(naturalTime, naturalX, 'b-', 'LineWidth', 1.5);
+title('1. Amostragem Natural no Tempo');
+xlabel('Tempo (s)'); ylabel('Amplitude');
+grid on; ylim([-1.2 1.2]);
 
-% FFT
-% TODO: Implementar as funções de FT de forma analítica
-Xc  = fftshift(fft(x_continuo));
-Xi = fftshift(fft(xs_ideal_continuo));
-Xn = fftshift(fft(xs_natural));
-Xft = fftshift(fft(xs_flat_top));
+% PLOT 2: Tempo - Amostragem Topo-Plano
+subplot(2, 2, 2);
+plot(flatTopTime, flatTopX, 'r-', 'LineWidth', 1.5);
+title('2. Amostragem Topo-Plano no Tempo');
+xlabel('Tempo (s)'); ylabel('Amplitude');
+grid on; ylim([-1.2 1.2]);
 
-% Magnitude normalizada
-Pc  = abs(Xc/Nc);
-Psi = abs(Xi/Nsi);
-Psn = abs(Xn/Nsn);
-Pft = abs(Xft/Nft);
+% PLOT 3: Frequência - Analítico (Natural)
+subplot(2, 2, 3);
+kNaturalSamples = -3:3; 
+naturalFrequencyLocations = []; 
+naturalMagnitudes = [];
 
-% Fase
-Xft_limpo = Xft;
-% Zera os valores do número complexo onde a magnitude normalizada é muito pequena
-Xft_limpo(abs(Xft/Nft) < 1e-3) = 0; 
-Argft = angle(Xft_limpo);
+% Amostragem Natural (usando interpolação sinc):
+% X_s(jω) = (τ/Ts) * Σ_{k=-∞}^{∞} sinc(kω_sτ/2) * X(j(ω-kω_s))
+% Esta expressão representa a amostragem natural
+% onde o sinal é amostrado por um trem de pulsos retangulares com
+% duração de τ segundos e período Ts.
+for k = kNaturalSamples
+    frequencyShift = k * samplingFrequency;
+    naturalFrequencyLocations = [naturalFrequencyLocations, -frequency + frequencyShift, frequency + frequencyShift];
+    naturalAmplitudeScale = (tau / samplingPeriod) * sinc(k * samplingFrequency * tau);
+    naturalMagnitudes = [naturalMagnitudes, abs(0.5 * naturalAmplitudeScale), abs(0.5 * naturalAmplitudeScale)];
+end
+stem(naturalFrequencyLocations, naturalMagnitudes, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+title('3. Espectro Analítico: Natural |X_n(j\omega)|');
+xlabel('Frequência (Hz)'); ylabel('Magnitude');
+grid on; xlim([-60 60]);
+line([-60 60], [0 0], 'Color', 'k');
 
-% Eixos de frequência
-fc  = (-floor(Nc/2):ceil(Nc/2)-1)*Fc/Nc;
-fsi = (-floor(Nsi/2):ceil(Nsi/2)-1)*Fsi/Nsi;
-fsn = (-floor(Nsn/2):ceil(Nsn/2)-1)*Fsn/Nsn;
-fft_freq = (-floor(Nft/2):ceil(Nft/2)-1)*Fft/Nft;
+% PLOT 4: Frequência - Analítico (Topo-Plano)
+subplot(2, 2, 4);
+flatTopFrequencyLocations = naturalFrequencyLocations; % Mesmas posições
+flatTopMagnitudes = [];
 
-% Plot
-fmax = 100;
+% Amostragem Topo-Plano (flat-top sampling) - amostragem com retângulos:
+% Xs(jω) = (τ/Ts) * sinc(ωsτ/(2π)) * Σ_{k=-∞}^{∞} X(j(ω-kωs))
+% Neste caso, a função sinc é aplicada fora da soma, 
+% caracterizando a amostragem por flat-top (efeito de abertura).
+for i = 1:length(flatTopFrequencyLocations)
+    flatTopFrequencyValues = flatTopFrequencyLocations(i);
+    flatTopMagnitudeScale = (tau / samplingPeriod) * sinc(flatTopFrequencyValues * tau);
+    flatTopMagnitudes = [flatTopMagnitudes, abs(0.5 * flatTopMagnitudeScale)];
+end
+stem(flatTopFrequencyLocations, flatTopMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+hold on;
+% Envelope do sinc
+sincEnvelopeFrequency = -60:0.1:60;
+flatTopEnvelope = abs(0.5 * (tau / samplingPeriod) * sinc(sincEnvelopeFrequency * tau));
+plot(sincEnvelopeFrequency, flatTopEnvelope, 'k--', 'LineWidth', 1);
+hold off;
 
-figure(2);
-
-subplot(5,1,1);
-plot(fc, Pc, 'Color', [1 0.5 0]);
-title('FFT bilateral do sinal original x(t)');
-xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
-grid on;
-xlim([-fmax fmax]);
-
-subplot(5,1,2);
-plot(fsi, Psi, 'Color', [1 0.5 0]);
-title('FFT bilateral da amostragem ideal');
-xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
-grid on;
-xlim([-fmax fmax]);
-
-subplot(5,1,3);
-plot(fsn, Psn, 'Color', [1 0.5 0]);
-title('FFT bilateral da amostragem natural');
-xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
-grid on;
-xlim([-fmax fmax]);
-
-subplot(5,1,4);
-plot(fft_freq, Pft, 'Color', [1 0.5 0]);
-title('Magnitude da FFT bilateral da amostragem topo-plano');
-xlabel('Frequência (Hz)');
-ylabel('|X(f)|');
-grid on;
-xlim([-fmax fmax]);
-
-subplot(5,1,5);
-plot(fft_freq, Argft, 'Color', [1 0.5 0]);
-title('Fase da FFT bilateral da amostragem topo-plano');
-xlabel('Frequência (Hz)');
-ylabel('∠X(f)');
-grid on;
-xlim([-fmax fmax]);
+title('4. Espectro Analítico: Topo-Plano |X_{ft}(j\omega)|');
+xlabel('Frequência (Hz)'); ylabel('Magnitude');
+legend('Impulsos', 'Envelope sinc (Abertura)', 'Location', 'northeast');
+grid on; xlim([-60 60]);
 
 % Save
 set(1, 'paperunits', 'inches');
@@ -155,15 +156,15 @@ set(2, 'paperunits', 'inches');
 set(2, 'papersize', [19.2 10.8]);
 set(2, 'paperposition', [0 0 19.2 10.8]);
 
-% 1. Define o caminho absoluto da pasta de saída primeiro
+% Define o caminho absoluto da pasta de saída primeiro
 root_dir = fileparts(mfilename('fullpath'));
 output_path = fullfile(root_dir, 'output');
 
-% 2. Cria a pasta no local correto (se não existir)
+% Cria a pasta no local correto (se não existir)
 if ~exist(output_path, 'dir')
     mkdir(output_path);
 end
 
-% 3. Salva os arquivos com o caminho absoluto
-print(1, fullfile(output_path, 'sinais_amostragem.jpg'), '-dpng', '-r100');
-print(2, fullfile(output_path, 'fft_amostragem.jpg'), '-dpng', '-r100');
+% Salva os arquivos com o caminho absoluto
+print(1, fullfile(output_path, 'sinais_amostragem1.png'), '-dpng', '-r100');
+print(2, fullfile(output_path, 'sinais_amostragem2.png'), '-dpng', '-r100');
