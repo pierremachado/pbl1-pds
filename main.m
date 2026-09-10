@@ -7,6 +7,9 @@ clear; clc; close all;
 f0 = 2;               % Frequência do sinal original (Hz)
 w0 = 2*pi*f0;         % Frequência angular (rad/s)
 fs = 13;              % Frequência de amostragem (Hz) - Respeita Nyquist (fs > 2*f0)
+f0 = 5;               % Frequência do sinal original (Hz)
+w0 = 2*pi*f0;         % Frequência angular (rad/s)
+fs = 40;              % Frequência de amostragem (Hz) - Respeita Nyquist (fs > 2*f0)
 ws = 2*pi*fs;         % Frequência angular de amostragem (rad/s)
 Ts = 1/fs;            % Período de amostragem (s)
 
@@ -46,8 +49,13 @@ ylim([-1.2 1.2]);
 % =========================================================================
 % PLOT 3: Espectro Analítico do Sinal Contínuo X(jw)
 % =========================================================================
+<<<<<<< HEAD
 % Para x(t) = sen(w0*t), a magnitude de X(jw) possui impulsos em -w0 e +w0 
 % com área igual a pi. Usaremos frequência em Hz (f) para facilitar a 
+=======
+% Para x(t) = sen(w0*t), a magnitude de X(jw) possui impulsos em -w0 e +w0
+% com área igual a pi. Usaremos frequência em Hz (f) para facilitar a
+>>>>>>> e947461 (Envio dos novos arquivos)
 % visualização, onde a amplitude é 0.5 em -f0 e +f0.
 
 f_orig = [-f0, f0];       % Posição dos impulsos
@@ -81,7 +89,11 @@ for idx = 1:length(k)
     f_shift = k(idx) * fs;
     f_samp_locs = [f_samp_locs, -f0 + f_shift, f0 + f_shift];
     % A magnitude é escalonada por 1/Ts = fs
+<<<<<<< HEAD
     mag_samp = [mag_samp, 0.5 * fs, 0.5 * fs]; 
+=======
+    mag_samp = [mag_samp, 0.5 * fs, 0.5 * fs];
+>>>>>>> e947461 (Envio dos novos arquivos)
 end
 
 subplot(2, 2, 4);
@@ -94,6 +106,12 @@ xlim([-40 40]);
 ylim([0 (0.5*fs)+2]);
 line([-40 40], [0 0], 'Color', 'k');
 
+<<<<<<< HEAD
 sgtitle('Análise Analítica de Amostragem Ideal de Sinais');
 
 % TODO: adicionar amostragem natural e topo-plano analítico
+=======
+% sgtitle('Análise Analítica de Amostragem Ideal de Sinais');
+
+% TODO: adicionar amostragem natural e topo-plano analítico
+>>>>>>> e947461 (Envio dos novos arquivos)
