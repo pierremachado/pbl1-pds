@@ -18,19 +18,25 @@ tau = 0.5 * samplingPeriod;            % Largura do pulso (50% do período)
 
 startTime = 0;                         % Tempo inicial
 endTime = 1;                           % Tempo final
-continuousTimeStep = 0.0005;           % Passo de tempo para o vetor "contínuo"
 
 % Define o sinal de origem como um "function handle" para passar às funções
 x = @(t) sin(omega * t);
 
-% Eixo de tempo contínuo para plotagem do sinal base
+% Eixo de tempo do sinal base
+continuousTimeStep = 0.0005;           % Passo de tempo para o vetor "contínuo"
 continuousTime = startTime:continuousTimeStep:endTime;
 continuousX = x(continuousTime);
 
-%% 2. Amostragem Ideal
-% Chamada da função que está em src/idealSampling.m
+% Amostragem Ideal
 [idealX, idealTime] = idealSampling(x, samplingFrequency, startTime, endTime);
 
+% Amostragem Natural
+[naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, startTime, endTime);
+
+% Amostragem Topo-Plano
+[flatTopX, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime, endTime);
+
+%% FIGURA 1
 figure(1, 'Name', 'Analise de Amostragem Ideal', 'Position', [100, 100, 1000, 800]);
 
 % PLOT 1: Tempo - Sinal Contínuo
@@ -62,7 +68,6 @@ subplot(2, 2, 4);
 kIdealSamples = -8:8;
 idealFrequencyLocations = []; 
 idealMagnitudes = [];
-
 % X_s(jω) = (1/Ts) * Σ_{k=-∞}^{∞} X(j(ω - k * ωs)))
 % Esta expressão representa a transformada de Fourier da amostragem ideal de um sinal.
 % É a soma de infinitas translações da transformada de Fourier original X(jω)
@@ -78,11 +83,7 @@ xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-40 40]); ylim([0 (0.5*samplingFrequency)+2]);
 line([-40 40], [0 0], 'Color', 'k');
 
-%% 3. Amostragem Natural e Topo-Plano
-% Chamada das funções em src/
-[naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, startTime, endTime);
-[flatTopX, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime, endTime);
-
+%% FIGURA 2
 figure(2, 'Name', 'Amostragem Natural e Topo-Plano', 'Position', [150, 150, 1000, 800]);
 
 % PLOT 1: Tempo - Amostragem Natural
@@ -104,7 +105,6 @@ subplot(2, 2, 3);
 kNaturalSamples = -8:8; 
 naturalFrequencyLocations = []; 
 naturalMagnitudes = [];
-
 % Amostragem Natural (usando interpolação sinc):
 % X_s(jω) = (τ/Ts) * Σ_{k=-∞}^{∞} sinc(kω_sτ/2) * X(j(ω-kω_s))
 % Esta expressão representa a amostragem natural
@@ -120,13 +120,11 @@ stem(naturalFrequencyLocations, naturalMagnitudes, 'b', 'Marker', '^', 'LineWidt
 title('3. Espectro Analítico: Natural |X_n(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-60 60]);
-line([-60 60], [0 0], 'Color', 'k');
 
 % PLOT 4: Frequência - Analítico (Topo-Plano)
 subplot(2, 2, 4);
 flatTopFrequencyLocations = naturalFrequencyLocations; % Mesmas posições
 flatTopMagnitudes = [];
-
 % Amostragem Topo-Plano (flat-top sampling) - amostragem com retângulos:
 % Xs(jω) = (τ/Ts) * sinc(ωsτ/(2π)) * Σ_{k=-∞}^{∞} X(j(ω-kωs))
 % Neste caso, a função sinc é aplicada fora da soma, 
@@ -143,7 +141,6 @@ sincEnvelopeFrequency = -60:0.1:60;
 flatTopEnvelope = abs(0.5 * (tau / samplingPeriod) * sinc(sincEnvelopeFrequency * tau));
 plot(sincEnvelopeFrequency, flatTopEnvelope, 'k--', 'LineWidth', 1);
 hold off;
-
 title('4. Espectro Analítico: Topo-Plano |X_{ft}(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 legend('Impulsos', 'Envelope sinc (Abertura)', 'Location', 'northeast');
