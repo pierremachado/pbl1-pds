@@ -1,7 +1,7 @@
 # PBL1-PDS
 Repositório com códigos compatíveis com Octave da disciplina de MI - Processamento Digital de Sinais
 
-# Análise Analítica de Amostragem
+# Análise comparativa do processo de amostragem para sinais analógicos de tempo contínuo
 
 Este código realiza uma análise analítica de amostragem de sinais contínuos. Ele compara a amostragem ideal com a amostragem natural e topo-plano, demonstrando como esses métodos afetam o sinal e seu espectro.
 

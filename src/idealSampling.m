@@ -1,4 +1,4 @@
-function [idealX, idealTime] = idealSampling(x, samplingFrequency, startTime = 0, endTime)
+function [idealX, idealTime] = idealSampling(x, samplingFrequency, startTime = 0, endTime = 1)
   % idealSampling - Função para amostragem ideal de um sinal
   % 
   % Parâmetros:
@@ -11,8 +11,17 @@ function [idealX, idealTime] = idealSampling(x, samplingFrequency, startTime = 0
   % idealX: Vetor de amostras do sinal
   % idealTime: Vetor de tempos correspondentes às amostras
 
-  Ts = 1/samplingFrequency;  % Cálculo do período de amostragem
+  % Checagem de erro
+  if isempty(x) || strcmp(typeinfo(x), "anonymous function")
+    error('x must be a valid function handle');
+  end
 
-  idealTime = startTime:Ts:(endTime-Ts);  % Geração do vetor de tempos de amostragem
+  if startTime >= endTime
+      error('startTime must < than endTime');
+  end
+
+  samplingPeriod = 1/samplingFrequency;  % Cálculo do período de amostragem
+
+  idealTime = startTime:samplingPeriod:(endTime-samplingPeriod);  % Geração do vetor de tempos de amostragem
   idealX = x(idealTime);  % Cálculo do vetor de amostras correspondentes
 end

@@ -12,8 +12,25 @@ function [naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, st
   % naturalX: vector of sampled values
   % naturalTime: vector of sample times
 
-  % Calculate the sampling period and time resolution
+  % Checagem de erro
+  if isempty(x) || strcmp(typeinfo(x), "anonymous function")
+    error('x must be a valid function handle');
+  end
+  
+  if tau <= 0
+      error('tau must be positive');
+  end
+
+  if startTime >= endTime
+      error('startTime must < than endTime');
+  end
+
   samplingPeriod = 1/samplingFrequency;
+
+  if tau > samplingPeriod
+      error('tau must be <= samplingPeriod');
+  end
+
   dt = samplingPeriod/1000;
 
   % Generate the time vector for sampling

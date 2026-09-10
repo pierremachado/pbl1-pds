@@ -1,15 +1,33 @@
-function [flatTopX, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime = 0, endTime)
+function [flatTopX, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime = 0, endTime = 1)
   % parâmetros: x = função (handle, ex: @sin)
   % samplingFrequency = frequência de amostragem
-  % tau = duração (largura) do pulso, tau <= timeStep
+  % tau = duração (largura) do pulso, tau <= samplingPeriod
   % startTime = tempo inicial (default = 0), endTime = tempo final
   % saída: flatTopX = vetor do sinal amostrado, flatTopTime = vetor de tempo contínuo
 
-  timeStep = 1/samplingFrequency;
-  dt = timeStep/1000;
+  % Checagem de erro
+  if isempty(x) || strcmp(typeinfo(x), "anonymous function")
+    error('x must be a valid function handle');
+  end
+  
+  if tau <= 0
+      error('tau must be positive');
+  end
+
+  if startTime >= endTime
+      error('startTime must < than endTime');
+  end
+
+  samplingPeriod = 1/samplingFrequency;
+
+  if tau > samplingPeriod
+      error('tau must be <= samplingPeriod');
+  end
+
+  dt = samplingPeriod/1000;
   flatTopTime = startTime:dt:endTime;
 
-  samplingTime = startTime:timeStep:endTime;
+  samplingTime = startTime:samplingPeriod:endTime;
   amplitudes = x(samplingTime);
 
   flatTopX = zeros(size(flatTopTime));
