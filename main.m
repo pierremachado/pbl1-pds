@@ -10,11 +10,13 @@ clear; clc; close all;
 addpath('src', 'utils');
 
 %% 1. Definição dos Parâmetros Globais
-frequency = 5;                         % Frequência do sinal original (Hz)
+frequency = 10;                         % Frequência do sinal original (Hz)
 omega = 2*pi*frequency;                % Frequência angular (rad/s)
-samplingFrequency = 20;                % Frequência de amostragem (Hz)
+samplingFrequency = 2594;                % Frequência de amostragem (Hz)
 samplingPeriod = 1/samplingFrequency;  % Período de amostragem (s)
 tau = 0.5 * samplingPeriod;            % Largura do pulso (50% do período)
+displayRange = 4 * samplingFrequency;
+kMax = ceil((displayRange + frequency) / samplingFrequency);
 
 startTime = 0;                         % Tempo inicial
 endTime = 1;                           % Tempo final
@@ -60,12 +62,12 @@ magnitudeContinuous = [0.5, 0.5];
 stem(frequencyContinuous, magnitudeContinuous, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Contínuo Analítico |X(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
-grid on; xlim([-40 40]); ylim([0 0.8]);
-line([-40 40], [0 0], 'Color', 'k');
+grid on; xlim([-displayRange displayRange]); ylim([0 0.8]);
+line([-displayRange displayRange], [0 0], 'Color', 'k');
 
 % PLOT 4: Frequência - Analítico (Amostrado Ideal)
 subplot(2, 2, 4);
-kIdealSamples = -8:8;
+kIdealSamples = -kMax:kMax;
 idealFrequencyLocations = []; 
 idealMagnitudes = [];
 % X_s(jω) = (1/Ts) * Σ_{k=-∞}^{∞} X(j(ω - k * ωs)))
@@ -80,8 +82,8 @@ end
 stem(idealFrequencyLocations, idealMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 title('4. Espectro Amostrado Ideal Analítico |X_s(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
-grid on; xlim([-40 40]); ylim([0 (0.5*samplingFrequency)+2]);
-line([-40 40], [0 0], 'Color', 'k');
+grid on; xlim([-displayRange displayRange]); ylim([0 (0.5*samplingFrequency)+2]);
+line([-displayRange displayRange], [0 0], 'Color', 'k');
 
 %% FIGURA 2
 figure(2, 'Name', 'Amostragem Natural e Topo-Plano', 'Position', [150, 150, 1000, 800]);
@@ -102,7 +104,7 @@ grid on; ylim([-1.2 1.2]);
 
 % PLOT 3: Frequência - Analítico (Natural)
 subplot(2, 2, 3);
-kNaturalSamples = -8:8; 
+kNaturalSamples = -kMax:kMax; 
 naturalFrequencyLocations = []; 
 naturalMagnitudes = [];
 % Amostragem Natural (usando interpolação sinc):
@@ -119,7 +121,7 @@ end
 stem(naturalFrequencyLocations, naturalMagnitudes, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Analítico: Natural |X_n(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
-grid on; xlim([-60 60]);
+grid on; xlim([-displayRange displayRange]);
 
 % PLOT 4: Frequência - Analítico (Topo-Plano)
 subplot(2, 2, 4);
@@ -137,14 +139,14 @@ end
 stem(flatTopFrequencyLocations, flatTopMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 hold on;
 % Envelope do sinc
-sincEnvelopeFrequency = -60:0.01:60;
+sincEnvelopeFrequency = -displayRange:samplingPeriod:displayRange;
 flatTopEnvelope = abs((tau / samplingPeriod) * sinc(sincEnvelopeFrequency * tau));
 plot(sincEnvelopeFrequency, flatTopEnvelope, 'k--', 'LineWidth', 1);
 hold off;
 title('4. Espectro Analítico: Topo-Plano |X_{ft}(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 legend('Impulsos', 'Envelope sinc (Abertura)', 'Location', 'northeast');
-grid on; xlim([-60 60]);
+grid on; xlim([-displayRange displayRange]);
 
 % Save
 set(1, 'paperunits', 'inches');
