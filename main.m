@@ -10,9 +10,9 @@ clear; clc; close all;
 addpath('src', 'utils');
 
 %% 1. Definição dos Parâmetros Globais
-frequency = 10;                         % Frequência do sinal original (Hz)
+frequency = 5;                         % Frequência do sinal original (Hz)
 omega = 2*pi*frequency;                % Frequência angular (rad/s)
-samplingFrequency = 2594;                % Frequência de amostragem (Hz)
+samplingFrequency = 20;                % Frequência de amostragem (Hz)
 samplingPeriod = 1/samplingFrequency;  % Período de amostragem (s)
 tau = 0.5 * samplingPeriod;            % Largura do pulso (50% do período)
 displayRange = 4 * samplingFrequency;
