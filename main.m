@@ -58,12 +58,11 @@ grid on; ylim([-1.2 1.2]);
 % PLOT 3: Frequência - Analítico (Contínuo)
 subplot(2, 2, 3);
 frequencyContinuous = [-frequency, frequency];
-magnitudeContinuous = [0.5, 0.5];
+magnitudeContinuous = [1, 1];
 stem(frequencyContinuous, magnitudeContinuous, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Contínuo Analítico |X(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
-grid on; xlim([-displayRange displayRange]); ylim([0 0.8]);
-line([-displayRange displayRange], [0 0], 'Color', 'k');
+grid on; xlim([-displayRange displayRange]);
 
 % PLOT 4: Frequência - Analítico (Amostrado Ideal)
 subplot(2, 2, 4);
@@ -83,7 +82,6 @@ stem(idealFrequencyLocations, idealMagnitudes, 'r', 'Marker', '^', 'LineWidth', 
 title('4. Espectro Amostrado Ideal Analítico |X_s(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-displayRange displayRange]); ylim([0 (0.5*samplingFrequency)+2]);
-line([-displayRange displayRange], [0 0], 'Color', 'k');
 
 %% FIGURA 2
 figure(2, 'Name', 'Amostragem Natural e Topo-Plano', 'Position', [150, 150, 1000, 800]);
