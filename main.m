@@ -12,7 +12,7 @@ frequency = 5;                         % Frequência do sinal original (Hz)
 omega = 2*pi*frequency;                % Frequência angular (rad/s)
 samplingFrequency = 20;                % Frequência de amostragem (Hz)
 samplingPeriod = 1/samplingFrequency;  % Período de amostragem (s)
-tau = 0.2 * samplingPeriod;            % Largura do pulso (20% do período)
+tau = 0.5 * samplingPeriod;            % Largura do pulso (50% do período)
 
 startTime = 0;                         % Tempo inicial
 endTime = 1;                           % Tempo final
@@ -57,7 +57,7 @@ line([-40 40], [0 0], 'Color', 'k');
 
 % PLOT 4: Frequência - Analítico (Amostrado Ideal)
 subplot(2, 2, 4);
-kIdealSamples = -2:2;
+kIdealSamples = -8:8;
 idealFrequencyLocations = []; 
 idealMagnitudes = [];
 
@@ -99,7 +99,7 @@ grid on; ylim([-1.2 1.2]);
 
 % PLOT 3: Frequência - Analítico (Natural)
 subplot(2, 2, 3);
-kNaturalSamples = -3:3; 
+kNaturalSamples = -8:8; 
 naturalFrequencyLocations = []; 
 naturalMagnitudes = [];
 

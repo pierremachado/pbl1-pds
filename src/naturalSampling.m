@@ -1,36 +1,36 @@
-function [xs, ts] = naturalSampling(x, Fs, w, Ti = 0, Tf)
+function [naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, startTime = 0, endTime)
   % Natural sampling function
   %
   % Parameters:
   % x: input signal (function)
-  % Fs: sampling frequency (Hz)
-  % w: pulse duration (seconds)
-  % Ti: start time of sampling (default = 0 seconds)
-  % Tf: end time of sampling (seconds)
+  % samplingFrequency: sampling frequency (Hz)
+  % tau: pulse duration (seconds)
+  % startTime: start time of sampling (default = 0 seconds)
+  % endTime: end time of sampling (seconds)
   %
   % Returns:
-  % xs: vector of sampled values
-  % ts: vector of sample times
+  % naturalX: vector of sampled values
+  % naturalTime: vector of sample times
 
   % Calculate the sampling period and time resolution
-  Ts = 1/Fs;
-  dt = Ts/1000;
+  samplingPeriod = 1/samplingFrequency;
+  dt = samplingPeriod/1000;
 
   % Generate the time vector for sampling
-  ts = Ti:dt:Tf;
+  naturalTime = startTime:dt:endTime;
 
   % Generate the time vector for sampling points
-  t_samp = Ti:Ts:Tf;
+  samplingTime = startTime:samplingPeriod:endTime;
 
   % Initialize the output vector with zeros
-  y = zeros(size(ts));
+  y = zeros(size(naturalTime));
 
   % Sample the input signal
-  for k = 1:length(t_samp)
-    idx = (ts >= t_samp(k)) & (ts < t_samp(k) + w);
+  for k = 1:length(samplingTime)
+    idx = (naturalTime >= samplingTime(k) - tau/2) & (naturalTime < samplingTime(k) + tau/2);
     y(idx) = 1;
   end
 
   % Multiply the input signal by the sampling points
-  xs = x(ts).*y;
+  naturalX = x(naturalTime).*y;
 end

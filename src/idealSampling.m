@@ -1,18 +1,18 @@
-function [xs, ts] = idealSampling(x, Fs, Ti = 0, Tf)
+function [idealX, idealTime] = idealSampling(x, samplingFrequency, startTime = 0, endTime)
   % idealSampling - Função para amostragem ideal de um sinal
   % 
   % Parâmetros:
   % x: Função que representa o sinal a ser amostrado
-  % Fs: Frequência de amostragem (Hz)
-  % Ti: Tempo inicial do intervalo de amostragem (opcional, default = 0)
-  % Tf: Tempo final do intervalo de amostragem (opcional)
+  % samplingFrequency: Frequência de amostragem (Hz)
+  % startTime: Tempo inicial do intervalo de amostragem (opcional, default = 0)
+  % endTime: Tempo final do intervalo de amostragem (opcional)
   % 
   % Saída:
-  % xs: Vetor de amostras do sinal
-  % ts: Vetor de tempos correspondentes às amostras
+  % idealX: Vetor de amostras do sinal
+  % idealTime: Vetor de tempos correspondentes às amostras
 
-  Ts = 1/Fs;  % Cálculo do período de amostragem
+  Ts = 1/samplingFrequency;  % Cálculo do período de amostragem
 
-  ts = Ti:Ts:(Tf-Ts);  % Geração do vetor de tempos de amostragem
-  xs = x(ts);  % Cálculo do vetor de amostras correspondentes
+  idealTime = startTime:Ts:(endTime-Ts);  % Geração do vetor de tempos de amostragem
+  idealX = x(idealTime);  % Cálculo do vetor de amostras correspondentes
 end
