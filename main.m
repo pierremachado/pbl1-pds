@@ -2,6 +2,8 @@
 % MAIN.M - Análise Analítica de Amostragem (Ideal, Natural e Topo-Plano)
 % =========================================================================
 
+% TODO: Adicionar análise por FFT
+
 clear; clc; close all;
 
 % Adiciona o diretório 'src' e o 'utils' ao path de busca do MATLAB/Octave
