@@ -8,15 +8,15 @@ clear; clc; close all;
 addpath('src', 'utils');
 
 %% 1. Definição dos Parâmetros Globais
-frequency = 5;                 % Frequência do sinal original (Hz)
-omega = 2*pi*frequency;           % Frequência angular (rad/s)
+frequency = 5;                         % Frequência do sinal original (Hz)
+omega = 2*pi*frequency;                % Frequência angular (rad/s)
 samplingFrequency = 20;                % Frequência de amostragem (Hz)
-samplingPeriod = 1/samplingFrequency;              % Período de amostragem (s)
-tau = 0.2 * samplingPeriod;         % Largura do pulso (20% do período)
+samplingPeriod = 1/samplingFrequency;  % Período de amostragem (s)
+tau = 0.2 * samplingPeriod;            % Largura do pulso (20% do período)
 
-startTime = 0;                 % Tempo inicial
-endTime = 1;               % Tempo final
-continuousTimeStep = 0.0005;       % Passo de tempo para o vetor "contínuo"
+startTime = 0;                         % Tempo inicial
+endTime = 1;                           % Tempo final
+continuousTimeStep = 0.0005;           % Passo de tempo para o vetor "contínuo"
 
 % Define o sinal de origem como um "function handle" para passar às funções
 x = @(t) sin(omega * t);
