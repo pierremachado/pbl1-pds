@@ -6,7 +6,7 @@ function [flatTopX, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, st
   % saída: flatTopX = vetor do sinal amostrado, flatTopTime = vetor de tempo contínuo
 
   % Checagem de erro
-  if isempty(x) || strcmp(typeinfo(x), "anonymous function")
+  if isempty(x) || ~isa(x, 'function_handle')
     error('x must be a valid function handle');
   end
   

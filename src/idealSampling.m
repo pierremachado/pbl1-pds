@@ -12,7 +12,7 @@ function [idealX, idealTime] = idealSampling(x, samplingFrequency, startTime = 0
   % idealTime: Vetor de tempos correspondentes às amostras
 
   % Checagem de erro
-  if isempty(x) || strcmp(typeinfo(x), "anonymous function")
+  if isempty(x) || ~isa(x, 'function_handle')
     error('x must be a valid function handle');
   end
 
