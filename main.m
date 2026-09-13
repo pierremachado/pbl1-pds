@@ -69,7 +69,7 @@ subplot(2, 2, 4);
 kIdealSamples = -kMax:kMax;
 idealFrequencyLocations = []; 
 idealMagnitudes = [];
-% X_s(jω) = (1/Ts) * Σ_{k=-∞}^{∞} X(j(ω - k * ωs)))
+% Xs(f) = (1/Ts) * Σ_{k=-∞}^{∞} X(f - kfs)
 % Esta expressão representa a transformada de Fourier da amostragem ideal de um sinal.
 % É a soma de infinitas translações da transformada de Fourier original X(jω)
 % espaçadas pela frequência de amostragem ωs, escaladas por 1/Ts.
@@ -106,7 +106,7 @@ kNaturalSamples = -kMax:kMax;
 naturalFrequencyLocations = []; 
 naturalMagnitudes = [];
 % Amostragem Natural (usando interpolação sinc):
-% X_s(jω) = (τ/Ts) * Σ_{k=-∞}^{∞} sinc(kω_sτ/2) * X(j(ω-kω_s))
+% X_s(f) = (τ/Ts) * Σ_{k=-∞}^{∞} sinc(kfsτ) * X(f-fs)
 % Esta expressão representa a amostragem natural
 % onde o sinal é amostrado por um trem de pulsos retangulares com
 % duração de τ segundos e período Ts.
@@ -126,7 +126,7 @@ subplot(2, 2, 4);
 flatTopFrequencyLocations = naturalFrequencyLocations; % Mesmas posições
 flatTopMagnitudes = [];
 % Amostragem Topo-Plano (flat-top sampling) - amostragem com retângulos:
-% Xs(jω) = (τ/Ts) * sinc(ωsτ/(2π)) * Σ_{k=-∞}^{∞} X(j(ω-kωs))
+% Xs(jω) = (τ/Ts) * sinc(fτ) * Σ_{k=-∞}^{∞} X(f-kfs)
 % Neste caso, a função sinc é aplicada fora da soma, 
 % caracterizando a amostragem por flat-top (efeito de abertura).
 for i = 1:length(flatTopFrequencyLocations)
