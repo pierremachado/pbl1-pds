@@ -12,9 +12,9 @@ addpath('src', 'utils');
 %% 1. Definição dos Parâmetros Globais
 frequency = 5;                         % Frequência do sinal original (Hz)
 omega = 2*pi*frequency;                % Frequência angular (rad/s)
-samplingFrequency = 20;                % Frequência de amostragem (Hz)
+samplingFrequency = 100;                % Frequência de amostragem (Hz)
 samplingPeriod = 1/samplingFrequency;  % Período de amostragem (s)
-tau = 0.5 * samplingPeriod;            % Largura do pulso (50% do período)
+tau = 0.20 * samplingPeriod;            % Largura do pulso (50% do período); Considerar usar percentual menor.
 displayRange = 4 * samplingFrequency;
 kMax = ceil((displayRange + frequency) / samplingFrequency);
 
@@ -67,7 +67,7 @@ grid on; xlim([-displayRange displayRange]);
 % PLOT 4: Frequência - Analítico (Amostrado Ideal)
 subplot(2, 2, 4);
 kIdealSamples = -kMax:kMax;
-idealFrequencyLocations = []; 
+idealFrequencyLocations = [];
 idealMagnitudes = [];
 % Xs(f) = (1/Ts) * Σ_{k=-∞}^{∞} X(f - kfs)
 % Esta expressão representa a transformada de Fourier da amostragem ideal de um sinal.
@@ -76,7 +76,7 @@ idealMagnitudes = [];
 for k = kIdealSamples
     frequencyShift = k * samplingFrequency;
     idealFrequencyLocations = [idealFrequencyLocations, -frequency + frequencyShift, frequency + frequencyShift];
-    idealMagnitudes = [idealMagnitudes, 0.5 * samplingFrequency, 0.5 * samplingFrequency]; 
+    idealMagnitudes = [idealMagnitudes, 0.5 * samplingFrequency, 0.5 * samplingFrequency];
 end
 stem(idealFrequencyLocations, idealMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 title('4. Espectro Amostrado Ideal Analítico |X_s(j\omega)|');
@@ -102,8 +102,8 @@ grid on; ylim([-1.2 1.2]);
 
 % PLOT 3: Frequência - Analítico (Natural)
 subplot(2, 2, 3);
-kNaturalSamples = -kMax:kMax; 
-naturalFrequencyLocations = []; 
+kNaturalSamples = -kMax:kMax;
+naturalFrequencyLocations = [];
 naturalMagnitudes = [];
 % Amostragem Natural (usando interpolação sinc):
 % X_s(f) = (τ/Ts) * Σ_{k=-∞}^{∞} sinc(kfsτ) * X(f-fs)
@@ -127,7 +127,7 @@ flatTopFrequencyLocations = naturalFrequencyLocations; % Mesmas posições
 flatTopMagnitudes = [];
 % Amostragem Topo-Plano (flat-top sampling) - amostragem com retângulos:
 % Xs(jω) = (τ/Ts) * sinc(fτ) * Σ_{k=-∞}^{∞} X(f-kfs)
-% Neste caso, a função sinc é aplicada fora da soma, 
+% Neste caso, a função sinc é aplicada fora da soma,
 % caracterizando a amostragem por flat-top (efeito de abertura).
 for i = 1:length(flatTopFrequencyLocations)
     flatTopFrequencyValues = flatTopFrequencyLocations(i);
@@ -167,3 +167,149 @@ end
 % Salva os arquivos com o caminho absoluto
 print(1, fullfile(output_path, 'sinais_amostragem1.png'), '-dpng', '-r100');
 print(2, fullfile(output_path, 'sinais_amostragem2.png'), '-dpng', '-r100');
+
+% TODO: Reconstrução do Sinal
+% TODO: Caso com Aliasing
+
+%% RECONSTRUÇÃO IDEAL
+
+[idealReconstructionSignal, filteredIdealMagnitudes] = ...
+    IdealReconstruction( ...
+        idealFrequencyLocations, ...
+        idealMagnitudes, ...
+        samplingFrequency, ...
+        continuousTime);
+
+%% FIGURA 3 - RECONSTRUÇÃO IDEAL
+
+figure(3, 'Name', 'Reconstrução Ideal', ...
+    'Position', [200, 100, 1000, 700]);
+
+% Sinal reconstruído
+subplot(2, 1, 1);
+
+plot(continuousTime, idealReconstructionSignal, ...
+    'r-', 'LineWidth', 1.5);
+
+title('1. Sinal Reconstruído no Domínio do Tempo');
+xlabel('Tempo (s)');
+ylabel('Amplitude');
+
+grid on;
+xlim([startTime endTime]);
+ylim([-1.2 1.2]);
+
+
+% Espectro filtrado
+subplot(2, 1, 2);
+
+stem(idealFrequencyLocations, ...
+    filteredIdealMagnitudes, ...
+    'r', ...
+    'Marker', '^', ...
+    'LineWidth', 1.5, ...
+    'MarkerFaceColor', 'r');
+
+title('2. Espectro Após o Filtro Ideal');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude');
+
+grid on;
+xlim([-displayRange displayRange]);
+ylim([0 0.6]);
+
+%% RECONSTRUÇÃO NATURAL
+
+[naturalReconstructionSignal, filteredNaturalMagnitudes] = ...
+    NaturalReconstruction( ...
+        naturalFrequencyLocations, ...
+        naturalMagnitudes, ...
+        samplingFrequency, ...
+        tau, ...
+        continuousTime);
+
+%% FIGURA 4 - RECONSTRUÇÃO NATURAL
+
+figure(4, 'Name', 'Reconstrução Natural', ...
+    'Position', [250, 100, 1000, 700]);
+
+% Sinal reconstruído
+subplot(2, 1, 1);
+
+plot(continuousTime, naturalReconstructionSignal, ...
+    'b-', 'LineWidth', 1.5);
+
+title('1. Sinal Reconstruído no Domínio do Tempo');
+xlabel('Tempo (s)');
+ylabel('Amplitude');
+
+grid on;
+xlim([startTime endTime]);
+ylim([-1.2 1.2]);
+
+
+% Espectro filtrado
+subplot(2, 1, 2);
+
+stem(naturalFrequencyLocations, ...
+    filteredNaturalMagnitudes, ...
+    'b', ...
+    'Marker', '^', ...
+    'LineWidth', 1.5, ...
+    'MarkerFaceColor', 'b');
+
+title('2. Espectro Após o Filtro Ideal');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude');
+
+grid on;
+xlim([-displayRange displayRange]);
+
+%% RECONSTRUÇÃO TOPO-PLANO
+
+[flatTopReconstructionSignal, filteredFlatTopMagnitudes] = ...
+    FlatTopReconstruction( ...
+        flatTopFrequencyLocations, ...
+        flatTopMagnitudes, ...
+        samplingFrequency, ...
+        tau, ...
+        continuousTime);
+
+%% FIGURA 5 - RECONSTRUÇÃO TOPO-PLANO
+
+figure(5, 'Name', 'Reconstrução Topo-Plano', ...
+    'Position', [300, 100, 1000, 700]);
+
+% Sinal reconstruído
+subplot(2, 1, 1);
+
+plot(continuousTime, flatTopReconstructionSignal, ...
+    'r-', 'LineWidth', 1.5);
+
+title('1. Sinal Reconstruído no Domínio do Tempo');
+xlabel('Tempo (s)');
+ylabel('Amplitude');
+
+grid on;
+xlim([startTime endTime]);
+ylim([-1.2 1.2]);
+
+
+% Espectro filtrado
+subplot(2, 1, 2);
+
+stem(flatTopFrequencyLocations, ...
+    filteredFlatTopMagnitudes, ...
+    'r', ...
+    'Marker', '^', ...
+    'LineWidth', 1.5, ...
+    'MarkerFaceColor', 'r');
+
+title('2. Espectro Após o Filtro Ideal');
+xlabel('Frequência (Hz)');
+ylabel('Magnitude');
+
+grid on;
+xlim([-displayRange displayRange]);
+
+% TODO: Avaliar casos com Aliasing e não executar análise por FFT.
