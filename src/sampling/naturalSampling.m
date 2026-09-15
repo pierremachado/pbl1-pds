@@ -31,10 +31,10 @@ function [sampledSignal, sampledTime] = naturalSampling(x, samplingFrequency, ta
       error('tau must be <= samplingPeriod');
   end
 
-  dt = samplingPeriod/1000;
+  numPoints = 4001;
 
   % Generate the time vector for sampling
-  sampledTime = startTime:dt:endTime;
+  sampledTime = linspace(startTime, endTime, numPoints);
 
   % Generate the time vector for sampling points
   samplingTime = startTime:samplingPeriod:endTime;

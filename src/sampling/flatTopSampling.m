@@ -24,8 +24,8 @@ function [sampledSignal, sampledTime] = flatTopSampling(x, samplingFrequency, ta
       error('tau must be <= samplingPeriod');
   end
 
-  dt = samplingPeriod/1000;
-  sampledTime = startTime:dt:endTime;
+  numPoints = 4001;
+  sampledTime = linspace(startTime, endTime, numPoints);
 
   samplingTime = startTime:samplingPeriod:endTime;
   amplitudes = x(samplingTime);
