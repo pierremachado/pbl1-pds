@@ -1,4 +1,4 @@
-function [naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, startTime = 0, endTime)
+function [sampledSignal, sampledTime] = naturalSampling(x, samplingFrequency, tau, startTime = 0, endTime)
   % Natural sampling function
   %
   % Parameters:
@@ -9,8 +9,8 @@ function [naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, st
   % endTime: end time of sampling (seconds)
   %
   % Returns:
-  % naturalX: vector of sampled values
-  % naturalTime: vector of sample times
+  % sampledSignal: vector of sampled values
+  % sampledTime: vector of sample times
 
   % Checagem de erro
   if isempty(x) || ~isa(x, 'function_handle')
@@ -34,20 +34,20 @@ function [naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, st
   dt = samplingPeriod/1000;
 
   % Generate the time vector for sampling
-  naturalTime = startTime:dt:endTime;
+  sampledTime = startTime:dt:endTime;
 
   % Generate the time vector for sampling points
   samplingTime = startTime:samplingPeriod:endTime;
 
   % Initialize the output vector with zeros
-  y = zeros(size(naturalTime));
+  y = zeros(size(sampledTime));
 
   % Sample the input signal
   for k = 1:length(samplingTime)
-    idx = (naturalTime >= samplingTime(k) - tau/2) & (naturalTime < samplingTime(k) + tau/2);
+    idx = (sampledTime >= samplingTime(k) - tau/2) & (sampledTime < samplingTime(k) + tau/2);
     y(idx) = 1;
   end
 
   % Multiply the input signal by the sampling points
-  naturalX = x(naturalTime).*y;
+  sampledSignal = x(sampledTime).*y;
 end
