@@ -1,4 +1,11 @@
-function [sampledSignal, sampledTime] = flatTopSampling(x, samplingFrequency, tau, startTime = 0, endTime = 1)
+function [sampledSignal, sampledTime] = ...
+  flatTopSampling(x, ...
+    samplingFrequency, ...
+    tau, ...
+    startTime = 0, ...
+    endTime, ...
+    numPoints
+  )
   % parâmetros: x = função (handle, ex: @sin)
   % samplingFrequency = frequência de amostragem
   % tau = duração (largura) do pulso, tau <= samplingPeriod
@@ -23,9 +30,8 @@ function [sampledSignal, sampledTime] = flatTopSampling(x, samplingFrequency, ta
   if tau > samplingPeriod
       error('tau must be <= samplingPeriod');
   end
-
-  dt = samplingPeriod/1000;
-  sampledTime = startTime:dt:endTime;
+  
+  sampledTime = linspace(startTime, endTime, numPoints);
 
   samplingTime = startTime:samplingPeriod:endTime;
   amplitudes = x(samplingTime);
