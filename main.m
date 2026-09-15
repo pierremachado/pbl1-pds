@@ -2,17 +2,16 @@
 % MAIN.M - Análise Analítica de Amostragem (Ideal, Natural e Topo-Plano)
 % =========================================================================
 
-% TODO: Adicionar análise por FFT
-
 clear; clc; close all;
 
 % Adiciona o diretório 'src' e o 'utils' ao path de busca do MATLAB/Octave
-addpath('src', 'utils');
+addpath(genpath('src'));
+addpath('utils');
 
 %% 1. Definição dos Parâmetros Globais
 frequency = 5;                         % Frequência do sinal original (Hz)
 omega = 2*pi*frequency;                % Frequência angular (rad/s)
-samplingFrequency = 100;                % Frequência de amostragem (Hz)
+samplingFrequency = 50;                % Frequência de amostragem (Hz)
 samplingPeriod = 1/samplingFrequency;  % Período de amostragem (s)
 tau = 0.20 * samplingPeriod;            % Largura do pulso (50% do período); Considerar usar percentual menor.
 displayRange = 4 * samplingFrequency;
@@ -57,28 +56,17 @@ grid on; ylim([-1.2 1.2]);
 
 % PLOT 3: Frequência - Analítico (Contínuo)
 subplot(2, 2, 3);
-frequencyContinuous = [-frequency, frequency];
-magnitudeContinuous = [0.5, 0.5];
-stem(frequencyContinuous, magnitudeContinuous, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+continuousFrequencies = [-frequency, frequency];
+continuousAmplitudes = [0.5, 0.5];
+stem(continuousFrequencies, continuousAmplitudes, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Contínuo Analítico |X(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-displayRange displayRange]);
 
 % PLOT 4: Frequência - Analítico (Amostrado Ideal)
 subplot(2, 2, 4);
-kIdealSamples = -kMax:kMax;
-idealFrequencyLocations = [];
-idealMagnitudes = [];
-% Xs(f) = (1/Ts) * Σ_{k=-∞}^{∞} X(f - kfs)
-% Esta expressão representa a transformada de Fourier da amostragem ideal de um sinal.
-% É a soma de infinitas translações da transformada de Fourier original X(jω)
-% espaçadas pela frequência de amostragem ωs, escaladas por 1/Ts.
-for k = kIdealSamples
-    frequencyShift = k * samplingFrequency;
-    idealFrequencyLocations = [idealFrequencyLocations, -frequency + frequencyShift, frequency + frequencyShift];
-    idealMagnitudes = [idealMagnitudes, 0.5 * samplingFrequency, 0.5 * samplingFrequency];
-end
-stem(idealFrequencyLocations, idealMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+[idealAmplitudes, idealFrequencies] = idealTransform(frequency, samplingFrequency, kMax);
+stem(idealFrequencies, abs(idealAmplitudes), 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 title('4. Espectro Amostrado Ideal Analítico |X_s(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-displayRange displayRange]); ylim([0 (0.5*samplingFrequency)+2]);
@@ -102,43 +90,20 @@ grid on; ylim([-1.2 1.2]);
 
 % PLOT 3: Frequência - Analítico (Natural)
 subplot(2, 2, 3);
-kNaturalSamples = -kMax:kMax;
-naturalFrequencyLocations = [];
-naturalMagnitudes = [];
-% Amostragem Natural (usando interpolação sinc):
-% X_s(f) = (τ/Ts) * Σ_{k=-∞}^{∞} sinc(kfsτ) * X(f-fs)
-% Esta expressão representa a amostragem natural
-% onde o sinal é amostrado por um trem de pulsos retangulares com
-% duração de τ segundos e período Ts.
-for k = kNaturalSamples
-    frequencyShift = k * samplingFrequency;
-    naturalFrequencyLocations = [naturalFrequencyLocations, -frequency + frequencyShift, frequency + frequencyShift];
-    naturalAmplitudeScale = (tau / samplingPeriod) * sinc(k * samplingFrequency * tau);
-    naturalMagnitudes = [naturalMagnitudes, abs(naturalAmplitudeScale), abs(naturalAmplitudeScale)];
-end
-stem(naturalFrequencyLocations, naturalMagnitudes, 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+[naturalAmplitudes, naturalFrequencies] = naturalTransform(frequency, samplingFrequency, tau, kMax);
+stem(naturalFrequencies, abs(naturalAmplitudes), 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Analítico: Natural |X_n(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-displayRange displayRange]);
 
 % PLOT 4: Frequência - Analítico (Topo-Plano)
 subplot(2, 2, 4);
-flatTopFrequencyLocations = naturalFrequencyLocations; % Mesmas posições
-flatTopMagnitudes = [];
-% Amostragem Topo-Plano (flat-top sampling) - amostragem com retângulos:
-% Xs(jω) = (τ/Ts) * sinc(fτ) * Σ_{k=-∞}^{∞} X(f-kfs)
-% Neste caso, a função sinc é aplicada fora da soma,
-% caracterizando a amostragem por flat-top (efeito de abertura).
-for i = 1:length(flatTopFrequencyLocations)
-    flatTopFrequencyValues = flatTopFrequencyLocations(i);
-    flatTopMagnitudeScale = (tau / samplingPeriod) * sinc(flatTopFrequencyValues * tau);
-    flatTopMagnitudes = [flatTopMagnitudes, abs(flatTopMagnitudeScale)];
-end
-stem(flatTopFrequencyLocations, flatTopMagnitudes, 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+[flatTopAmplitudes, flatTopFrequencies] = flatTopTransform(frequency, samplingFrequency, tau, kMax);
+stem(flatTopFrequencies, abs(flatTopAmplitudes), 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 hold on;
 % Envelope do sinc
 sincEnvelopeFrequency = -displayRange:samplingPeriod:displayRange;
-flatTopEnvelope = abs((tau / samplingPeriod) * sinc(sincEnvelopeFrequency * tau));
+flatTopEnvelope = abs((tau / samplingPeriod) * sinc(sincEnvelopeFrequency * tau) * 0.5j);
 plot(sincEnvelopeFrequency, flatTopEnvelope, 'k--', 'LineWidth', 1);
 hold off;
 title('4. Espectro Analítico: Topo-Plano |X_{ft}(j\omega)|');
@@ -174,9 +139,9 @@ print(2, fullfile(output_path, 'sinais_amostragem2.png'), '-dpng', '-r100');
 %% RECONSTRUÇÃO IDEAL
 
 [idealReconstructionSignal, filteredIdealMagnitudes] = ...
-    IdealReconstruction( ...
-        idealFrequencyLocations, ...
-        idealMagnitudes, ...
+    idealReconstruction( ...
+        idealFrequencies, ...
+        idealAmplitudes, ...
         samplingFrequency, ...
         continuousTime);
 
@@ -203,8 +168,8 @@ ylim([-1.2 1.2]);
 % Espectro filtrado
 subplot(2, 1, 2);
 
-stem(idealFrequencyLocations, ...
-    filteredIdealMagnitudes, ...
+stem(idealFrequencies, ...
+    abs(filteredIdealMagnitudes), ...
     'r', ...
     'Marker', '^', ...
     'LineWidth', 1.5, ...
@@ -221,9 +186,9 @@ ylim([0 0.6]);
 %% RECONSTRUÇÃO NATURAL
 
 [naturalReconstructionSignal, filteredNaturalMagnitudes] = ...
-    NaturalReconstruction( ...
-        naturalFrequencyLocations, ...
-        naturalMagnitudes, ...
+    naturalReconstruction( ...
+        naturalFrequencies, ...
+        naturalAmplitudes, ...
         samplingFrequency, ...
         tau, ...
         continuousTime);
@@ -251,7 +216,7 @@ ylim([-1.2 1.2]);
 % Espectro filtrado
 subplot(2, 1, 2);
 
-stem(naturalFrequencyLocations, ...
+stem(naturalFrequencies, ...
     filteredNaturalMagnitudes, ...
     'b', ...
     'Marker', '^', ...
@@ -268,9 +233,9 @@ xlim([-displayRange displayRange]);
 %% RECONSTRUÇÃO TOPO-PLANO
 
 [flatTopReconstructionSignal, filteredFlatTopMagnitudes] = ...
-    FlatTopReconstruction( ...
-        flatTopFrequencyLocations, ...
-        flatTopMagnitudes, ...
+    flatTopReconstruction( ...
+        flatTopFrequencies, ...
+        flatTopAmplitudes, ...
         samplingFrequency, ...
         tau, ...
         continuousTime);
@@ -298,7 +263,7 @@ ylim([-1.2 1.2]);
 % Espectro filtrado
 subplot(2, 1, 2);
 
-stem(flatTopFrequencyLocations, ...
+stem(flatTopFrequencies, ...
     filteredFlatTopMagnitudes, ...
     'r', ...
     'Marker', '^', ...
