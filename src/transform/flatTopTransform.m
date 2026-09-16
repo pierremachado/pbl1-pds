@@ -22,5 +22,5 @@ function [amplitudes, frequencies] = ...
         amplitudes = [amplitudes, 0.5j, -0.5j];
     end
     amplitudeScale = (tau / samplingPeriod) * sinc(frequencies * tau);
-    amplitudes = amplitudeScale .* amplitudes
+    amplitudes = amplitudeScale .* amplitudes;
 end

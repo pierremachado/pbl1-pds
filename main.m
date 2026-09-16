@@ -24,18 +24,18 @@ endTime = 8/frequency;                 % Tempo final
 x = @(t) sin(omega * t);
 
 % Eixo de tempo do sinal base
-numPoints = 5001;          % Passo de tempo para o vetor "contínuo"
+numPoints = 4001; % Número de pontos para plotar
 continuousTime = linspace(startTime, endTime, numPoints);
-continuousX = x(continuousTime);
+continuousSignal = x(continuousTime);
 
 % Amostragem Ideal
-[idealX, idealTime] = idealSampling(x, samplingFrequency, startTime, endTime);
+[idealSignal, idealTime] = idealSampling(x, samplingFrequency, startTime, endTime);
 
 % Amostragem Natural
-[naturalX, naturalTime] = naturalSampling(x, samplingFrequency, tau, startTime, endTime);
+[naturalSignal, naturalTime] = naturalSampling(x, samplingFrequency, tau, startTime, endTime, numPoints);
 
 % Amostragem Topo-Plano
-[flatTopX, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime, endTime);
+[flatTopSignal, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime, endTime, numPoints);
 
 % Frequência Contínuo
 [continuousAmplitudes, continuousFrequencies] = dataTransform(continuousX, continuousTime, displayRange, numPoints);
@@ -54,14 +54,14 @@ figure(1, 'Name', 'Analise de Amostragem Ideal', 'Position', [100, 100, 1000, 80
 
 % PLOT 1: Tempo - Sinal Contínuo
 subplot(2, 2, 1);
-plot(continuousTime, continuousX, 'b-', 'LineWidth', 1.5);
+plot(continuousTime, continuousSignal, 'b-', 'LineWidth', 1.5);
 title('1. Sinal Contínuo x(t) = sen(\omega_0 t)');
 xlabel('Tempo (s)'); ylabel('Amplitude');
 grid on; ylim([-1.2 1.2]);
 
 % PLOT 2: Tempo - Amostrado de forma Ideal
 subplot(2, 2, 2);
-stem(idealTime, idealX, 'r', 'filled', 'LineWidth', 1.5);
+stem(idealTime, idealSignal, 'r', 'filled', 'LineWidth', 1.5);
 title('2. Amostragem Ideal (Tempo)');
 xlabel('Tempo (s)'); ylabel('Amplitude');
 grid on; ylim([-1.2 1.2]);
@@ -90,14 +90,14 @@ figure(2, 'Name', 'Amostragem Natural e Topo-Plano', 'Position', [150, 150, 1000
 
 % PLOT 1: Tempo - Amostragem Natural
 subplot(2, 2, 1);
-plot(naturalTime, naturalX, 'b-', 'LineWidth', 1.5);
+plot(naturalTime, naturalSignal, 'b-', 'LineWidth', 1.5);
 title('1. Amostragem Natural no Tempo');
 xlabel('Tempo (s)'); ylabel('Amplitude');
 grid on; ylim([-1.2 1.2]);
 
 % PLOT 2: Tempo - Amostragem Topo-Plano
 subplot(2, 2, 2);
-plot(flatTopTime, flatTopX, 'r-', 'LineWidth', 1.5);
+plot(flatTopTime, flatTopSignal, 'r-', 'LineWidth', 1.5);
 title('2. Amostragem Topo-Plano no Tempo');
 xlabel('Tempo (s)'); ylabel('Amplitude');
 grid on; ylim([-1.2 1.2]);
