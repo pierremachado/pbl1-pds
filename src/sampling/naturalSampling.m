@@ -39,11 +39,6 @@ function [sampledSignal, sampledTime] = ...
       error('tau must be <= samplingPeriod');
   end
 
-<<<<<<< HEAD
-  numPoints = 4001;
-
-=======
->>>>>>> main
   % Generate the time vector for sampling
   sampledTime = linspace(startTime, endTime, numPoints);
 

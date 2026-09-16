@@ -30,12 +30,7 @@ function [sampledSignal, sampledTime] = ...
   if tau > samplingPeriod
       error('tau must be <= samplingPeriod');
   end
-<<<<<<< HEAD
-
-  numPoints = 4001;
-=======
   
->>>>>>> main
   sampledTime = linspace(startTime, endTime, numPoints);
 
   samplingTime = startTime:samplingPeriod:endTime;
