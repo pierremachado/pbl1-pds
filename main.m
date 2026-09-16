@@ -6,7 +6,6 @@ clear; clc; close all;
 
 % Adiciona o diretório 'src' e o 'utils' ao path de busca do MATLAB/Octave
 addpath(genpath('src'));
-addpath('utils');
 
 %% 1. Definição dos Parâmetros Globais
 frequency = 10;                        % Frequência do sinal original (Hz)
@@ -38,16 +37,16 @@ continuousSignal = x(continuousTime);
 [flatTopSignal, flatTopTime] = flatTopSampling(x, samplingFrequency, tau, startTime, endTime, numPoints);
 
 % Frequência Contínuo
-[continuousAmplitudes, continuousFrequencies] = dataTransform(continuousX, continuousTime, displayRange, numPoints);
+[continuousAmplitudes, continuousFrequencies] = dataTransform(continuousSignal, continuousTime, displayRange, numPoints);
 
 % Frequência Ideal
-[idealAmplitudes, idealFrequencies] = dataTransform(idealX, idealTime, displayRange, numPoints);
+[idealAmplitudes, idealFrequencies] = dataTransform(idealSignal, idealTime, displayRange, numPoints);
 
 % Frequência Natural
-[naturalAmplitudes, naturalFrequencies] = dataTransform(naturalX, naturalTime, displayRange, numPoints);
+[naturalAmplitudes, naturalFrequencies] = dataTransform(naturalSignal, naturalTime, displayRange, numPoints);
 
 % Frequência Topo-Plano
-[flatTopAmplitudes, flatTopFrequencies] =  dataTransform(flatTopX, flatTopTime, displayRange, numPoints);
+[flatTopAmplitudes, flatTopFrequencies] =  dataTransform(flatTopSignal, flatTopTime, displayRange, numPoints);
 
 %% FIGURA 1
 figure(1, 'Name', 'Analise de Amostragem Ideal', 'Position', [100, 100, 1000, 800]);
