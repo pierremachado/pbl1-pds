@@ -19,7 +19,7 @@ kMax = ceil((displayRange + frequency) / samplingFrequency); % Quantidade de ré
 
 startTime = 0;                         % Tempo inicial
 endTime = 1;                           % Tempo final
-numPoints = 4001;                      % Número de pontos para plotar
+numPoints = 5001;                      % Número de pontos para plotar
 
 % Define o sinal de origem como um "function handle" para passar às funções
 x = @(t) sin(omega * t);

@@ -9,7 +9,7 @@ function [signal, filteredAmplitudes] = ...
 
     samplingPeriod = 1 / samplingFrequency;
 
-    % O peso deve ser o INVERSO do ciclo de trabalho para compensar a atenuação
+    % O peso deve ser o inverso do ciclo de trabalho para compensar a atenuação
     weighting = samplingPeriod / tau; 
 
     % O pulso passa-baixa ideal deve ter amplitude 1 (normalizado)
