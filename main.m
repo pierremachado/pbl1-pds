@@ -13,7 +13,7 @@ frequency = 5;                         % Frequência do sinal original (Hz)
 omega = 2 * pi * frequency;            % Frequência angular (rad/s)
 samplingFrequency = 50;                % Frequência de amostragem (Hz)
 samplingPeriod = 1/samplingFrequency;  % Período de amostragem (s)
-tau = 0.20 * samplingPeriod;           % Largura do pulso (20% do período); Considerar usar percentual menor.
+tau = 0.2 * samplingPeriod;            % Largura do pulso (20% do período); Considerar usar percentual menor.
 displayRange = 4 * samplingFrequency;  % Limite no eixo x de plotar as frequências
 kMax = ceil((displayRange + frequency) / samplingFrequency); % Quantidade de réplicas de frequência
 
@@ -42,7 +42,7 @@ grid on; ylim([-1.2 1.2]);
 % PLOT 2: Frequência - Analítico (Contínuo)
 subplot(3, 1, 2);
 continuousFrequencies = [-frequency, frequency];
-continuousAmplitudes = [-0.5j, 0.5j];
+continuousAmplitudes = [0.5j, -0.5j];
 stem(continuousFrequencies, abs(continuousAmplitudes), 'b', 'Filled', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('2. Espectro Contínuo Analítico |X(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
