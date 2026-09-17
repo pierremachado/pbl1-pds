@@ -9,16 +9,14 @@ function [signal, filteredAmplitudes] = ...
 
     samplingPeriod = 1 / samplingFrequency;
 
-    % Ponderação da réplica central (k = 0)
-    weighting = (tau / samplingPeriod) * sinc(0);
+    % O peso deve ser o INVERSO do ciclo de trabalho para compensar a atenuação
+    weighting = samplingPeriod / tau; 
 
-    % Pulso ideal de amplitude samplingPeriod
-    pulse = samplingPeriod * ...
-        (abs(frequencies) <= samplingFrequency / 2);
+    % O pulso passa-baixa ideal deve ter amplitude 1 (normalizado)
+    pulse = 1 * (abs(frequencies) <= samplingFrequency / 2);
 
     % Espectro após o filtro ideal
-    filteredAmplitudes = ...
-        amplitudes .* pulse * weighting;
+    filteredAmplitudes = amplitudes .* pulse * weighting;
 
     % Transformada de Fourier inversa
     signal = zeros(size(time));

@@ -43,13 +43,13 @@ grid on; ylim([-1.2 1.2]);
 subplot(3, 1, 2);
 continuousFrequencies = [-frequency, frequency];
 continuousAmplitudes = [-0.5j, 0.5j];
-stem(continuousFrequencies, abs(continuousAmplitudes), 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+stem(continuousFrequencies, abs(continuousAmplitudes), 'b', 'Filled', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('2. Espectro Contínuo Analítico |X(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-displayRange displayRange]);
 
 subplot(3, 1, 3);
-stem(continuousFrequencies, angle(continuousAmplitudes), 'b', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+stem(continuousFrequencies, angle(continuousAmplitudes), 'b', 'Filled', 'LineWidth', 1.5);
 title('Espectro Contínuo Analítico ∠X(j\omega)');
 xlabel('Frequência (Hz)'); ylabel('Fase');
 grid on; xlim([-displayRange displayRange]);
@@ -63,7 +63,7 @@ figure('Name', 'Amostragem ideal do sinal x(t)', 'Position', [100, 100, 1000, 80
 
 % PLOT 1: Tempo - Amostrado de forma Ideal
 subplot(3, 1, 1);
-stem(idealTime, idealSignal, 'r', 'filled', 'LineWidth', 1.5);
+stem(idealTime, idealSignal, 'r', 'Filled', 'LineWidth', 1.5);
 title('2. Amostragem Ideal (Tempo)');
 xlabel('Tempo (s)'); ylabel('Amplitude');
 grid on; ylim([-1.2 1.2]);
@@ -71,15 +71,16 @@ grid on; ylim([-1.2 1.2]);
 % PLOT 2: Frequência - Analítico (Amostrado Ideal)
 subplot(3, 1, 2);
 [idealAmplitudes, idealFrequencies] = idealTransform(frequency, samplingFrequency, kMax);
-stem(idealFrequencies, abs(idealAmplitudes), 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+stem(idealFrequencies, abs(idealAmplitudes), 'r', 'Filled', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 title('4. Espectro Amostrado Ideal Analítico |X_s(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-displayRange displayRange]); ylim([0 (0.5*samplingFrequency)+2]);
 
 subplot(3, 1, 3);
-stem(idealFrequencies, arg(idealAmplitudes), 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
-title('4. Espectro Amostrado Ideal Analítico |X_s(j\omega)|');
+stem(idealFrequencies, arg(idealAmplitudes), 'r', 'Filled', 'LineWidth', 1.5);
+title('4. Espectro Amostrado Ideal Analítico ∠X_s(j\omega)');
 xlabel('Frequência (Hz)'); ylabel('Fase');
+grid on; xlim([-displayRange displayRange]);
 
 
 % Amostragem Natural
@@ -98,14 +99,14 @@ grid on; ylim([-1.2 1.2]);
 % PLOT 2: Frequência - Analítico (Natural)
 subplot(3, 1, 2);
 [naturalAmplitudes, naturalFrequencies] = naturalTransform(frequency, samplingFrequency, tau, kMax);
-stem(naturalFrequencies, abs(naturalAmplitudes), 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
+stem(naturalFrequencies, abs(naturalAmplitudes), 'b', 'Filled', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
 title('3. Espectro Analítico: Natural |X_n(j\omega)|');
 xlabel('Frequência (Hz)'); ylabel('Magnitude');
 grid on; xlim([-displayRange displayRange]);
 
 subplot(3, 1, 3);
-stem(naturalFrequencies, arg(naturalAmplitudes), 'b', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
-title('3. Espectro Analítico: Natural |X_n(j\omega)|');
+stem(naturalFrequencies, arg(naturalAmplitudes), 'b', 'Filled', 'LineWidth', 1.5);
+title('3. Espectro Analítico: Natural ∠X_n(j\omega)');
 xlabel('Frequência (Hz)'); ylabel('Fase');
 grid on; xlim([-displayRange displayRange]);
 
@@ -126,7 +127,7 @@ grid on; ylim([-1.2 1.2]);
 % PLOT 2: Frequência - Analítico (Topo-Plano)
 subplot(3, 1, 2);
 [flatTopAmplitudes, flatTopFrequencies] = flatTopTransform(frequency, samplingFrequency, tau, kMax);
-stem(flatTopFrequencies, abs(flatTopAmplitudes), 'r', 'Marker', '^', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+stem(flatTopFrequencies, abs(flatTopAmplitudes), 'r', 'Filled', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
 hold on;
 % Envelope do sinc
 sincEnvelopeFrequency = -displayRange:samplingPeriod:displayRange;
@@ -139,9 +140,10 @@ legend('Impulsos', 'Envelope sinc (Abertura)', 'Location', 'northeast');
 grid on; xlim([-displayRange displayRange]);
 
 subplot(3,1,3);
-stem(flatTopFrequencies, angle(flatTopAmplitudes), 'r', 'LineWidth', 1.5, 'MarkerFaceColor', 'r');
+stem(flatTopFrequencies, angle(flatTopAmplitudes), 'r', 'Filled', 'LineWidth', 1.5);
 title('4. Espectro Analítico: Topo-Plano ∠X_{ft}(j\omega)');
 xlabel('Frequência (Hz)'); ylabel('Fase');
+grid on; xlim([-displayRange displayRange]);
 
 
 % Save
@@ -171,7 +173,7 @@ end
 
 %% RECONSTRUÇÃO IDEAL
 
-[idealReconstructionSignal, filteredIdealMagnitudes] = ...
+[idealReconstructionSignal, filteredIdealAmplitudes] = ...
     idealReconstruction( ...
         idealFrequencies, ...
         idealAmplitudes, ...
@@ -202,9 +204,9 @@ ylim([-1.2 1.2]);
 subplot(2, 1, 2);
 
 stem(idealFrequencies, ...
-    abs(filteredIdealMagnitudes), ...
+    abs(filteredIdealAmplitudes), ...
     'r', ...
-    'Marker', '^', ...
+    'Filled', ...
     'LineWidth', 1.5, ...
     'MarkerFaceColor', 'r');
 
@@ -218,7 +220,7 @@ ylim([0 0.6]);
 
 %% RECONSTRUÇÃO NATURAL
 
-[naturalReconstructionSignal, filteredNaturalMagnitudes] = ...
+[naturalReconstructionSignal, filteredNaturalAmplitudes] = ...
     naturalReconstruction( ...
         naturalFrequencies, ...
         naturalAmplitudes, ...
@@ -250,9 +252,9 @@ ylim([-1.2 1.2]);
 subplot(2, 1, 2);
 
 stem(naturalFrequencies, ...
-    filteredNaturalMagnitudes, ...
+    abs(filteredNaturalAmplitudes), ...
     'b', ...
-    'Marker', '^', ...
+    'Filled', ...
     'LineWidth', 1.5, ...
     'MarkerFaceColor', 'b');
 
@@ -262,10 +264,11 @@ ylabel('Magnitude');
 
 grid on;
 xlim([-displayRange displayRange]);
+ylim([0 0.6]);
 
 %% RECONSTRUÇÃO TOPO-PLANO
 
-[flatTopReconstructionSignal, filteredFlatTopMagnitudes] = ...
+[flatTopReconstructionSignal, filteredFlatTopAmplitudes] = ...
     flatTopReconstruction( ...
         flatTopFrequencies, ...
         flatTopAmplitudes, ...
@@ -292,14 +295,13 @@ grid on;
 xlim([startTime endTime]);
 ylim([-1.2 1.2]);
 
-
 % Espectro filtrado
 subplot(2, 1, 2);
 
 stem(flatTopFrequencies, ...
-    filteredFlatTopMagnitudes, ...
+    abs(filteredFlatTopAmplitudes), ...
     'r', ...
-    'Marker', '^', ...
+    'Filled', ...
     'LineWidth', 1.5, ...
     'MarkerFaceColor', 'r');
 
@@ -309,6 +311,7 @@ ylabel('Magnitude');
 
 grid on;
 xlim([-displayRange displayRange]);
+ylim([0 0.6]);
 
 % TODO: Avaliar casos com Aliasing e não executar análise por FFT.
 
