@@ -16,6 +16,6 @@ function [amplitudes, frequencies] = ...
     for k = kSamples
         frequencyShift = k * samplingFrequency;
         frequencies = [frequencies, -frequency + frequencyShift, frequency + frequencyShift];
-        amplitudes = [amplitudes, 0.5j * samplingFrequency, -0.5j * samplingFrequency];
+        amplitudes = [amplitudes, 0.5j * samplingFrequency, 0.5j * -samplingFrequency];
     end
 end

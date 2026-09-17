@@ -20,6 +20,6 @@ function [amplitudes, frequencies] = ...
         frequencyShift = k * samplingFrequency;
         frequencies = [frequencies, -frequency + frequencyShift, frequency + frequencyShift];
         amplitudeScale = (tau / samplingPeriod) * sinc(k * samplingFrequency * tau);
-        amplitudes = [amplitudes, 0.5j * amplitudeScale, -0.5j * amplitudeScale];
+        amplitudes = [amplitudes, 0.5j * amplitudeScale, 0.5j * -amplitudeScale];
     end
 end
