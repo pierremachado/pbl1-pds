@@ -34,6 +34,34 @@ function runSamplingCase( ...
         merge(isAliasing, ' [ALIASING]', ''));
 
     % ---------------------------------------------------------------
+    % Reconstrução Contínua com Filtro Passa-Baixa
+    % ---------------------------------------------------------------
+    fprintf('    -> [Etapa Extra] Reconstrução Contínua (Sinal Composto)\n');
+    
+    % Cria o sinal composto x_c(t) = sin(2*pi*f*t) + 0.25*cos(4*2*pi*f*t)
+    compSignal = sin(2*pi*frequency*continuousTime) + 0.25*sin(4*2*pi*frequency*continuousTime);
+    
+    % Frequências e amplitudes analíticas do sinal composto
+    compFrequencies = [-4*frequency, -frequency, frequency, 4*frequency];
+    compAmplitudes = [0.125j, 0.5j, -0.5j, -0.125j];
+    
+    % O filtro passa-baixa ideal aplicado na reconstrução tem corte em f
+    cutoffFrequency = frequency + frequency * 1e-6;
+
+    % Aplica o filtro no domínio da frequência
+    [compReconSignal, filteredCompAmplitudes] = continuousReconstruction( ...
+        compFrequencies, compAmplitudes, cutoffFrequency, continuousTime);
+
+    % Plota e salva a figura utilizando a nova função da grade 3x2
+    figCont = plotOriginalAndReconstructedFigure( ...
+        sprintf('Reconstrução Contínua (Filtro Passa-Baixa) - %s', caseLabel), ...
+        continuousTime, compSignal, compReconSignal, ...
+        compFrequencies, compAmplitudes, filteredCompAmplitudes, ...
+        displayRange ...
+    );
+    saveFigurePng(figCont, fullfile(outputPath, sprintf('continuous_reconstruction_%s.png', caseSuffix)));
+
+    % ---------------------------------------------------------------
     % AMOSTRAGEM
     % ---------------------------------------------------------------
 
