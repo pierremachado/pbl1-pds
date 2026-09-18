@@ -39,7 +39,7 @@ function [sampledSignal, sampledTime] = ...
   sampledSignal = zeros(size(sampledTime));
 
   for k = 1:length(samplingTime)
-    idx = (sampledTime >= samplingTime(k) - tau/2) & (sampledTime < samplingTime(k) + tau/2);
+    idx = (sampledTime >= samplingTime(k)) & (sampledTime < samplingTime(k) + tau);
     sampledSignal(idx) = amplitudes(k);
   end
 end

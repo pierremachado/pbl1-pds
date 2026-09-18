@@ -64,12 +64,12 @@ function fig = plotSamplingFigure( ...
     stem(continuousFrequencies, angle(continuousAmplitudes), 'b', 'Filled', 'LineWidth', 1.5, 'MarkerFaceColor', 'b');
     title('Espectro Contínuo ∠X(f)');
     xlabel('Frequência (Hz)'); ylabel('Magnitude');
-    grid on; xlim([-displayRange displayRange]); ylim([-2 2]);
+    grid on; xlim([-displayRange displayRange]); ylim([-4 4]);
 
     % PLOT 6: Espectro amostrado
     subplot(3, 2, 6);
     stem(sampledFrequencies, angle(sampledAmplitudes), sampledColor, 'Filled', 'LineWidth', 1.5, 'MarkerFaceColor', sampledColor);
     title(['Espectro Amostrado ∠X_s(f)']);
     xlabel('Frequência (Hz)'); ylabel('Fase');
-    grid on; xlim([-displayRange displayRange]); ylim([-2 2]);
+    grid on; xlim([-displayRange displayRange]); ylim([-4 4]);
 end
