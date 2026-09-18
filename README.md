@@ -35,3 +35,30 @@ O código modular utiliza funções de amostragem implementadas em arquivos sepa
 *   **Análise no Tempo:** Gráficos que comparam o sinal original com as amostras resultantes de cada método.
 *   **Análise na Frequência:** Espectros analíticos que demonstram as réplicas espectrais, ponderações e o efeito de abertura.
 *   **Ajuste Dinâmico:** Capacidade de ajustar a frequência de amostragem para observar claramente situações com e sem a ocorrência de *aliasing*.
+
+## Simulações e Resultados
+
+Abaixo estão listados os resultados das simulações visuais, organizados por tipo de método e mudança de parâmetro.
+
+### 1. Filtro Passa-Baixas Ideal
+| Reconstrução Contínua (f1) | Reconstrução Contínua (f2) |
+| :---: | :---: |
+| ![f1](output/1_f1_change_continuous_reconstruction.gif) | ![f2](output/2_f2_change_continuous_reconstruction.gif) |
+
+### 2. Amostragem Ideal
+| Amostragem | Reconstrução |
+| :---: | :---: |
+| **Alteração da Frequência do Sinal**<br>![Reconstrução Ideal Freq](output/1_freq_change_sampling_ideal.gif) | **Alteração da Frequência do Sinal**<br>![Amostragem Ideal Freq](output/1_freq_change_reconstruction_ideal.gif) |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Ideal Fs](output/2_fs_change_sampling_ideal.gif) | **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Ideal Fs](output/2_fs_change_reconstruction_ideal.gif) |
+
+### 3. Amostragem Natural
+| Amostragem | Reconstrução |
+| :---: | :---: |
+| **Alteração da Frequência do Sinal**<br>![Reconstrução Natural Freq](output/1_freq_change_sampling_natural.gif) | **Alteração da Frequência do Sinal**<br>![Amostragem Natural Freq](output/1_freq_change_reconstruction_natural.gif) |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Natural Fs](output/2_fs_change_sampling_natural.gif) | **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Natural Fs](output/2_fs_change_reconstruction_natural.gif) |
+
+### 4. Mudança Flat-Top
+| Amostragem | Reconstrução |
+| :---: | :---: |
+| **Alteração da Frequência do Sinal**<br>![Reconstrução Flat-Top Freq](output/1_freq_change_sampling_flattop.gif) | **Alteração da Frequência do Sinal**<br>![Amostragem Flat-Top Freq](output/1_freq_change_reconstruction_flattop.gif) |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Flat-Top Fs](output/2_fs_change_sampling_flattop.gif) | **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Flat-Top Fs](output/2_fs_change_reconstruction_flattop.gif) |
