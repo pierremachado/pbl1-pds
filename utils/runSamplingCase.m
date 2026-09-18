@@ -38,7 +38,7 @@ function runSamplingCase( ...
     % ---------------------------------------------------------------
     fprintf('    -> [Etapa Extra] Reconstrução Contínua (Sinal Composto)\n');
     
-    % Cria o sinal composto x_c(t) = sin(2*pi*f*t) + 0.25*cos(4*2*pi*f*t)
+    % Cria o sinal composto x_c(t)
     compSignal = sin(2*pi*frequency*continuousTime) + 0.25*sin(4*2*pi*frequency*continuousTime);
     
     % Frequências e amplitudes analíticas do sinal composto
@@ -46,7 +46,7 @@ function runSamplingCase( ...
     compAmplitudes = [0.125j, 0.5j, -0.5j, -0.125j];
     
     % O filtro passa-baixa ideal aplicado na reconstrução tem corte em f
-    cutoffFrequency = frequency + frequency * 1e-6;
+    cutoffFrequency = frequency * (1 + 1e-6);
 
     % Aplica o filtro no domínio da frequência
     [compReconSignal, filteredCompAmplitudes] = continuousReconstruction( ...
