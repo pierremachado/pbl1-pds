@@ -61,7 +61,7 @@
 
     \begin{figure}
         \centering
-        \includegraphics[width=\linewidth]{Imagens/1.png}
+        \includegraphics[width=\linewidth]{images/1.png}
         \caption{Sistema total de amostragem. Fonte: Adaptado de: (Oppenheim, 2013).}
         \label{fig1}
     \end{figure}
@@ -173,9 +173,9 @@
 
             \begin{figure}
                 \centering
-                \includegraphics[width=1.1\linewidth]{Imagens/2.png}
+                \includegraphics[width=1.1\linewidth]{images/2.png}
                 \caption{Réplicas Espectrais do Sinal Amostrado sem \textit{aliasing}. Fonte: (Oppenheim, 2013)}
-                \label{fig2}
+                \label{fig3}
             \end{figure}
 
             \column{0.5\textwidth}
@@ -186,9 +186,9 @@
     
             \begin{figure}
                 \centering
-                \includegraphics[width=1.1\linewidth]{Imagens/3.png}
+                \includegraphics[width=1.1\linewidth]{images/3.png}
                 \caption{Réplicas Espectrais do Sinal Amostrado com \textit{aliasing}. Fonte: (Oppenheim, 2013)}
-                \label{fig3}
+                \label{fig4}
             \end{figure}
             
         \end{columns}
@@ -466,7 +466,7 @@ a\,x(t) \leftrightarrow a\,X(f), \quad x(t)e^{j2\pi f_0t} \leftrightarrow X(f-f_
 
         \begin{figure}
             \centering
-            \includegraphics[width=0.75\linewidth]{Imagens/4.png}
+            \includegraphics[width=0.75\linewidth]{images/4.png}
             \caption{Amostragem Natural. Fonte: EEEGUIDE.COM, ``Types of Sampling Techniques''.}
         \end{figure}
     \end{columns}
@@ -694,7 +694,7 @@ a\,x(t) \leftrightarrow a\,X(f), \quad x(t)e^{j2\pi f_0t} \leftrightarrow X(f-f_
 
         \begin{figure}
             \centering
-            \includegraphics[width=0.75\linewidth]{Imagens/5.png}
+            \includegraphics[width=0.75\linewidth]{images/5.png}
             \caption{Amostragem Flat-Top. Fonte: QUES10. "State Sampling theorem. Explain Flat-top sampling. Draw its spectrum and explain Aperture effect."}
         \end{figure}
     \end{columns}
@@ -751,7 +751,7 @@ Com o espectro do pulso definido pela função $\operatorname{sinc}$ ponderada:
     
     \begin{figure}
         \centering
-        \includegraphics[width=0.5\linewidth]{Imagens/6.png}
+        \includegraphics[width=0.5\linewidth]{images/6.png}
         \caption{Fonte: BHARATH INSTITUTE OF HIGHER EDUCATION AND RESEARCH.\textit{Communication Engineering II — BEC604}}
     \end{figure}
 \end{frame}
@@ -828,7 +828,7 @@ Com o espectro do pulso definido pela função $\operatorname{sinc}$ ponderada:
 
 \begin{frame}{Reconstrução do Sinal por Amostragem Topo-Plano}
     \begin{itemize}
-        \item Por fim, seja $X_{flat}(f) = {{\tau}\over {T_s}} \cdot sinc(f\tau) \sum_{k=-\infty}^{\infty} X(f-kfs) \cdot e^{-j\pi ft}$, a reconstrução a partir da amostragem topo-plano difere das demais, tendo a sua reconstrução feita da seguinte forma:
+        \item Por fim, seja $X_{FT}(f) = {{\tau}\over {T_s}} \cdot sinc(f\tau) \sum_{k=-\infty}^{\infty} X(f-kfs) \cdot e^{-j\pi ft}$, a reconstrução a partir da amostragem topo-plano difere das demais, tendo a sua reconstrução feita da seguinte forma:
             \begin{itemize}
                 \item Isolando a primeira réplica com um filtro passa-baixas, escolhendo uma frequência de corte $f_c$ tal que apenas a réplica em $k=0$ seja mantida;
                 \item Aplicar um filtro equalizador, multiplicando a função no domínio da frequência por $X_{eq}(f)=\frac{T_s}{\tau} \cdot \frac{1}{sinc(f\tau)} \cdot e^{j\pi ft}$, eliminando assim a componente complexa de defasagem e realizando o ganho da amplitude.
