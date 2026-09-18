@@ -44,16 +44,16 @@ endTime = 1;
 % Em ambientes mais lentos (ex: sem interface gráfica Qt/FLTK), considere
 % reduzir numFramesPerSweep para acelerar a geração dos 12 GIFs.
 numPoints = 2001;
-numFramesPerSweep = 35;
+numFramesPerSweep = 40;
 
 % =========================================================================
 %% SWEEP 1: Variando a Frequência do Sinal (fs fixa)
 % =========================================================================
 disp('Gerando animações do Sweep 1: variando a frequência do sinal...');
 
-samplingFrequencyFixed = 50;               % fs fixa (Nyquist exige f < 25 Hz)
-displayRangeSweep1 = 100;                  % fixo para a animação não "pular"
-freqSweep1 = linspace(5, 40, numFramesPerSweep);          % frequência varia de 5 a 40 Hz
+samplingFrequencyFixed = 20;               % fs fixa (Nyquist exige f < 25 Hz)
+displayRangeSweep1 = 60;                  % fixo para a animação não "pular"
+freqSweep1 = linspace(1, 25, numFramesPerSweep);          % frequência varia de 1 a 25 Hz
 
 runAnimationSweep( ...
     'Sweep 1 (variando f)', ...
@@ -68,9 +68,9 @@ runAnimationSweep( ...
 % =========================================================================
 disp('Gerando animações do Sweep 2: variando a frequência de amostragem...');
 
-frequencyFixed = 20;                       % f fixa (Nyquist exige fs > 40 Hz)
-displayRangeSweep2 = 150;                  % fixo para a animação
-fsSweep2 = linspace(100, 15, numFramesPerSweep);          % fs varia caindo de 100 até 15 Hz
+frequencyFixed = 15;                       % f fixa (Nyquist exige fs > 30 Hz)
+displayRangeSweep2 = 60;                  % fixo para a animação
+fsSweep2 = linspace(10, 50, numFramesPerSweep);          % fs varia de 10 até 50 Hz
 
 runAnimationSweep( ...
     'Sweep 2 (variando fs)', ...

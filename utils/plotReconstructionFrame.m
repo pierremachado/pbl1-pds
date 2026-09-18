@@ -23,9 +23,9 @@ function plotReconstructionFrame( ...
     xlabel('Tempo (s)'); ylabel('Amplitude'); grid on; ylim([-1.2 1.2]);
 
     subplot(2, 2, 3);
-    plot(continuousTime, continuousSignal, 'b-', 'LineWidth', 1);
+    plot(continuousTime, continuousSignal, 'k--', 'LineWidth', 1);
     hold on;
-    plot(continuousTime, reconstructedSignal, [color '--'], 'LineWidth', 1.2);
+    plot(continuousTime, reconstructedSignal, [color '-'], 'LineWidth', 1.2);
     hold off;
     title('Sobreposição: Original vs Reconstruído');
     xlabel('Tempo (s)'); ylabel('Amplitude'); grid on; ylim([-1.2 1.2]);
