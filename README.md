@@ -89,7 +89,7 @@ Abaixo estão listados os resultados das simulações visuais, organizados por t
 | Amostragem |
 | :---: |
 | **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Natural Fs](output/2_fs_change_sampling_natural.gif) |
-| Amostragem natural com $f_s$ variando. Observe como as distâncias entre os pares de réplicas mudam junto com $f_s$. |
+| Amostragem natural com $f_s$ variando. Observe como as distâncias entre os pares de réplicas mudam junto com $f_s$. Note também como a fase aparenta estar invertida em pontos mais distantes nos primeiros momentos; isso ocorre devido ao fator de $sinc$ que multiplica a réplica por um valor negativo, invertendo a fase. |
 
 | Reconstrução |
 | :---: |

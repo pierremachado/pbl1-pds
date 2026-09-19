@@ -18,7 +18,7 @@ endTime = 1;
 numPoints = 2001;
 numFramesPerSweep = 40;
 
-displayRange = 60; % Fixo para a animação não ficar "pulando" o eixo X
+displayRange = 100; % Fixo para a animação não ficar "pulando" o eixo X
 
 % =========================================================================
 %% SWEEP 1: Variando a Frequência da 1ª Senoide (f1), com f2 fixa
