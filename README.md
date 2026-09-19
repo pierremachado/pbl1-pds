@@ -41,31 +41,79 @@ O código modular utiliza funções de amostragem implementadas em arquivos sepa
 Abaixo estão listados os resultados das simulações visuais, organizados por tipo de método e mudança de parâmetro.
 
 ### 1. Filtro Passa-Baixas Ideal
-| Reconstrução Contínua (f1) | Reconstrução Contínua (f2) |
-| :---: | :---: |
-| ![f1](output/1_f1_change_continuous_reconstruction.gif) | ![f2](output/2_f2_change_continuous_reconstruction.gif) |
-| Sinal contínuo filtrado diretamente no domínio da frequência (sem amostragem), variando a frequência do sinal de interesse, bem como a frequência de corte que o acompanha. | Mesmo filtro passa-baixas ideal, agora variando a frequência da senoide de ruído. Mostra como a banda passante determina quais componentes são preservadas. |
+
+| Reconstrução Contínua (f1) |
+| :---: |
+| ![f1](output/1_f1_change_continuous_reconstruction.gif) |
+| Sinal contínuo filtrado diretamente no domínio da frequência (sem amostragem), variando a frequência do sinal de interesse, bem como a frequência de corte que o acompanha. |
+
+| Reconstrução Contínua (f2) |
+| :---: |
+| ![f2](output/2_f2_change_continuous_reconstruction.gif) |
+| Mesmo filtro passa-baixas ideal, agora variando a frequência da senoide de ruído. Mostra como a banda passante determina quais componentes são preservadas. |
 
 ### 2. Amostragem Ideal
-| Amostragem | Reconstrução |
-| :---: | :---: |
-| **Alteração da Frequência do Sinal**<br>![Amostragem Ideal Freq](output/1_freq_change_sampling_ideal.gif) | **Alteração da Frequência do Sinal**<br>![Reconstrução Ideal Freq](output/1_freq_change_reconstruction_ideal.gif) |
-| A frequência do sinal aumenta com $f_s$ fixa. Observe o sinal se aproximando e ultrapassando o limite de Nyquist ($f_s/2$), causando aliasing. | O sinal é reconstruído a partir das amostras ideais via filtro passa-baixas. Note como a reconstrução deixa de acompanhar o sinal original após o limiar de Nyquist. |
-| **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Ideal Fs](output/2_fs_change_sampling_ideal.gif) | **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Ideal Fs](output/2_fs_change_reconstruction_ideal.gif) |
-| A frequência de amostragem $f_s$ varia com o sinal fixo. Observe o espectro amostrado: as réplicas se afastam conforme $f_s$ aumenta. | Reconstrução do mesmo sinal variando $f_s$. Mostra a transição e aliasing (Nyquist violado) e a reconstrução correta (Nyquist respeitado). |
+
+| Amostragem |
+| :---: |
+| **Alteração da Frequência do Sinal**<br>![Amostragem Ideal Freq](output/1_freq_change_sampling_ideal.gif) |
+| A frequência do sinal aumenta com $f_s$ fixa. Observe o sinal se aproximando e ultrapassando o limite de Nyquist ($f_s/2$), causando aliasing. |
+
+| Reconstrução |
+| :---: |
+| **Alteração da Frequência do Sinal**<br>![Reconstrução Ideal Freq](output/1_freq_change_reconstruction_ideal.gif) |
+| O sinal é reconstruído a partir das amostras ideais via filtro passa-baixas. Note como a reconstrução deixa de acompanhar o sinal original após o limiar de Nyquist. |
+
+| Amostragem |
+| :---: |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Ideal Fs](output/2_fs_change_sampling_ideal.gif) |
+| A frequência de amostragem $f_s$ varia com o sinal fixo. Observe o espectro amostrado: as réplicas se afastam conforme $f_s$ aumenta. |
+
+| Reconstrução |
+| :---: |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Ideal Fs](output/2_fs_change_reconstruction_ideal.gif) |
+| Reconstrução do mesmo sinal variando $f_s$. Mostra a transição e aliasing (Nyquist violado) e a reconstrução correta (Nyquist respeitado). |
 
 ### 3. Amostragem Natural
-| Amostragem | Reconstrução |
-| :---: | :---: |
-| **Alteração da Frequência do Sinal**<br>![Amostragem Natural Freq](output/1_freq_change_sampling_natural.gif) | **Alteração da Frequência do Sinal**<br>![Reconstrução Natural Freq](output/1_freq_change_reconstruction_natural.gif) |
-| Amostragem natural (trem de pulsos retangulares) com frequência do sinal variando. | Reconstrução a partir da amostragem natural. Mesma dinâmica de aliasing da amostragem ideal ao cruzar Nyquist, mas com o espectro adicionalmente moldado pelo sinc da largura de pulso $\tau$. |
-| **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Natural Fs](output/2_fs_change_sampling_natural.gif) | **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Natural Fs](output/2_fs_change_reconstruction_natural.gif) |
-| Amostragem natural com $f_s$ variando. Observe como as distâncias entre os pares de réplicas mudam junto com $f_s$. | Reconstrução variando $f_s$. Mostra a mesma transição Nyquist-OK/aliasing vista na amostragem ideal, agora sob amostragem natural. |
+
+| Amostragem |
+| :---: |
+| **Alteração da Frequência do Sinal**<br>![Amostragem Natural Freq](output/1_freq_change_sampling_natural.gif) |
+| Amostragem natural (trem de pulsos retangulares) com frequência do sinal variando. |
+
+| Reconstrução |
+| :---: |
+| **Alteração da Frequência do Sinal**<br>![Reconstrução Natural Freq](output/1_freq_change_reconstruction_natural.gif) |
+| Reconstrução a partir da amostragem natural. Mesma dinâmica de aliasing da amostragem ideal ao cruzar Nyquist, mas com o espectro adicionalmente moldado pelo sinc da largura de pulso $\tau$. |
+
+| Amostragem |
+| :---: |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Natural Fs](output/2_fs_change_sampling_natural.gif) |
+| Amostragem natural com $f_s$ variando. Observe como as distâncias entre os pares de réplicas mudam junto com $f_s$. |
+
+| Reconstrução |
+| :---: |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Natural Fs](output/2_fs_change_reconstruction_natural.gif) |
+| Reconstrução variando $f_s$. Mostra a mesma transição Nyquist-OK/aliasing vista na amostragem ideal, agora sob amostragem natural. |
 
 ### 4. Mudança Flat-Top
-| Amostragem | Reconstrução |
-| :---: | :---: |
-| **Alteração da Frequência do Sinal**<br>![Amostragem Flat-Top Freq](output/1_freq_change_sampling_flattop.gif) | **Alteração da Frequência do Sinal**<br>![Reconstrução Flat-Top Freq](output/1_freq_change_reconstruction_flattop.gif) |
-| Amostragem topo-plano (sample-and-hold) com frequência do sinal variando. Cada amostra é mantida constante ("segurada") durante o intervalo do pulso, ao contrário da natural. Nota-se também o deslocamento de fase decorrente da causalidade do pulso. | Reconstrução a partir da amostragem topo-plano. |
-| **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Flat-Top Fs](output/2_fs_change_sampling_flattop.gif) | **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Flat-Top Fs](output/2_fs_change_reconstruction_flattop.gif) |
-| Amostragem topo-plano com $f_s$ variando. Observe o efeito conjunto da mudança de $f_s$ sobre a largura do pulso e o espectro amostrado. | Reconstrução variando $f_s$. |
+
+| Amostragem |
+| :---: |
+| **Alteração da Frequência do Sinal**<br>![Amostragem Flat-Top Freq](output/1_freq_change_sampling_flattop.gif) |
+| Amostragem topo-plano (sample-and-hold) com frequência do sinal variando. Cada amostra é mantida constante ("segurada") durante o intervalo do pulso, ao contrário da natural. Nota-se também o deslocamento de fase decorrente da causalidade do pulso. |
+
+| Reconstrução |
+| :---: |
+| **Alteração da Frequência do Sinal**<br>![Reconstrução Flat-Top Freq](output/1_freq_change_reconstruction_flattop.gif) |
+| Reconstrução a partir da amostragem topo-plano. |
+
+| Amostragem |
+| :---: |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Amostragem Flat-Top Fs](output/2_fs_change_sampling_flattop.gif) |
+| Amostragem topo-plano com $f_s$ variando. Observe o efeito conjunto da mudança de $f_s$ sobre a largura do pulso e o espectro amostrado. |
+
+| Reconstrução |
+| :---: |
+| **Alteração da Frequência de Amostragem (Fs)**<br>![Reconstrução Flat-Top Fs](output/2_fs_change_reconstruction_flattop.gif) |
+| Reconstrução variando $f_s$. |
