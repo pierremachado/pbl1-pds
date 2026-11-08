@@ -1,6 +1,10 @@
-# PBL1-PDS
+# Análise de Métodos de Amostragem para Sinais Analógicos
 
-Repositório com códigos compatíveis com Octave da disciplina de MI - Processamento Digital de Sinais.
+**TEC513 · Processamento Digital de Sinais · UEFS · Problema 01**
+
+Implementação dos métodos de amostragem ideal, natural e topo-plano para análise comparativa, contendo códigos compatíveis com **MATLAB** e **GNU Octave**.
+
+> **Documento principal do projeto:** A fundamentação completa, metodologia, diagramas e discussão detalhada dos resultados encontram-se na apresentação finalizada em [**`docs/main.pdf`**](docs/main.pdf) (código-fonte em [`docs/main.tex`](docs/main.tex)).
 
 Este projeto visa resolver o desafio proposto à equipe de engenharia da **SigmaDSP Inc.**, consistindo na avaliação do teorema da amostragem de sinais analógicos de tempo contínuo, a primeira etapa da conversão Analógico/Digital. 
 
